@@ -1,0 +1,10 @@
+{
+  "name": "playbook-hub-contabil",
+  "version": "1.0.0",
+  "description": "Agente gerador de playbooks para escritórios contábeis",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'Static site - no build needed'"
+  },
+  "dependencies": {}
+}

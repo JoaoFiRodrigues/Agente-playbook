@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Playbook Hub — Contabilidades</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <!-- jsPDF para geração de PDF no browser -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- HEADER -->
+  <div class="hdr">
+    <div class="hdr-ico">📋</div>
+    <div>
+      <h1>Playbook Hub — Contabilidades</h1>
+      <p>Transformar e Potencializar Contabilidades · Gerador IA + Dashboard + Histórico</p>
+    </div>
+  </div>
+
+  <!-- NAV PRINCIPAL -->
+  <div class="nav">
+    <button class="nav-btn active" onclick="showView('criar')" id="nav-criar">✏️ Criar Playbook</button>
+    <button class="nav-btn" onclick="showView('dash')" id="nav-dash">📊 Dashboard</button>
+    <button class="nav-btn" onclick="showView('hist')" id="nav-hist">📁 Histórico</button>
+  </div>
+
+  <!-- ========== VIEW: CRIAR ========== -->
+  <div class="view active" id="view-criar">
+
+    <!-- STEPPER -->
+    <div class="stepper">
+      <button class="sb active" onclick="goStep(1)" id="sb1"><span class="n">1</span> <span class="sb-label">Parceiro</span></button>
+      <button class="sb" onclick="goStep(2)" id="sb2"><span class="n">2</span> <span class="sb-label">Diagnóstico</span></button>
+      <button class="sb" onclick="goStep(3)" id="sb3"><span class="n">3</span> <span class="sb-label">Objetivos</span></button>
+      <button class="sb" onclick="goStep(4)" id="sb4"><span class="n">4</span> <span class="sb-label">Estrutura</span></button>
+      <button class="sb" onclick="goStep(5)" id="sb5"><span class="n">5</span> <span class="sb-label">Gerar</span></button>
+    </div>
+
+    <!-- STEP 1: PARCEIRO -->
+    <div class="step active" id="step1">
+      <div class="card">
+        <div class="card-title">Dados do Futuro Parceiro</div>
+        <div class="card-sub">Preencha e a capa já é personalizada em tempo real com o nome do parceiro.</div>
+
+        <!-- Prévia da capa -->
+        <div class="cover-preview" id="cover-preview">
+          <div class="cov-badge">Playbook Estratégico · Exclusivo</div>
+          <h2 id="cp-esc">Nome do Escritório</h2>
+          <h3 id="cp-subtitulo">Guia de Transformação e Potencialização</h3>
+          <div class="cov-label">Elaborado especialmente para</div>
+          <div class="cov-recip">
+            <strong id="cp-nome">Nome do Responsável</strong><br>
+            <span id="cp-cargo">Sócio-Diretor</span>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="field">
+            <label>Nome do Escritório <span class="req">*</span></label>
+            <input type="text" id="f-esc" placeholder="Ex: Contabilidade Excelência" oninput="updateCover()">
+          </div>
+          <div class="field">
+            <label>Nome do Responsável <span class="req">*</span></label>
+            <input type="text" id="f-nome" placeholder="Ex: Dr. João Silva" oninput="updateCover()">
+          </div>
+          <div class="field">
+            <label>Cargo / Função</label>
+            <input type="text" id="f-cargo" placeholder="Ex: Sócio-Diretor" oninput="updateCover()">
+          </div>
+          <div class="field">
+            <label>Cidade / Estado</label>
+            <input type="text" id="f-cidade" placeholder="Ex: São Paulo, SP">
+          </div>
+          <div class="field">
+            <label>E-mail de contato</label>
+            <input type="email" id="f-email" placeholder="joao@escritorio.com.br">
+          </div>
+          <div class="field">
+            <label>Vendedor / Responsável pelo envio</label>
+            <input type="text" id="f-vendedor" placeholder="Ex: Maria Oliveira">
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="nextStep(1)">Próximo →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2: DIAGNÓSTICO -->
+    <div class="step" id="step2">
+      <div class="card">
+        <div class="card-title">Diagnóstico do Escritório</div>
+        <div class="card-sub">Dados reais geram um diagnóstico preciso e um playbook muito mais impactante.</div>
+
+        <div class="form-grid">
+          <div class="field">
+            <label>Porte do escritório</label>
+            <select id="f-porte">
+              <option value="">Selecione...</option>
+              <option>Microescritório (1-3 func.)</option>
+              <option>Pequeno (4-10 func.)</option>
+              <option>Médio (11-30 func.)</option>
+              <option>Grande (31+ func.)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Clientes ativos (aprox.)</label>
+            <select id="f-cli">
+              <option value="">Selecione...</option>
+              <option>Menos de 30</option>
+              <option>30 a 80</option>
+              <option>81 a 200</option>
+              <option>Mais de 200</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Faturamento mensal estimado</label>
+            <select id="f-fat">
+              <option value="">Selecione...</option>
+              <option>Até R$ 20 mil</option>
+              <option>R$ 20 mil a R$ 60 mil</option>
+              <option>R$ 60 mil a R$ 150 mil</option>
+              <option>Acima de R$ 150 mil</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Segmento principal de clientes</label>
+            <select id="f-seg">
+              <option value="">Selecione...</option>
+              <option>Comércio</option>
+              <option>Serviços</option>
+              <option>Indústria</option>
+              <option>Misto</option>
+              <option>Agronegócio</option>
+              <option>Saúde / Clínicas</option>
+              <option>Construção Civil</option>
+            </select>
+          </div>
+          <div class="field full">
+            <label>Principais dores <span class="req">*</span></label>
+            <div class="tags" id="tg-dores">
+              <span class="tag" onclick="toggleTag(this)">Captação de clientes</span>
+              <span class="tag" onclick="toggleTag(this)">Precificação baixa</span>
+              <span class="tag" onclick="toggleTag(this)">Dependência do sócio</span>
+              <span class="tag" onclick="toggleTag(this)">Processos manuais</span>
+              <span class="tag" onclick="toggleTag(this)">Falta de sistema</span>
+              <span class="tag" onclick="toggleTag(this)">Equipe sem treinamento</span>
+              <span class="tag" onclick="toggleTag(this)">Comunicação fraca com clientes</span>
+              <span class="tag" onclick="toggleTag(this)">Inadimplência elevada</span>
+              <span class="tag" onclick="toggleTag(this)">Dificuldade de crescer</span>
+              <span class="tag" onclick="toggleTag(this)">Sem diferencial competitivo</span>
+            </div>
+          </div>
+          <div class="field full">
+            <label>Descreva a maior dor em suas palavras</label>
+            <textarea id="f-dor" placeholder="Ex: Temos dificuldade de mostrar o valor dos nossos serviços além das obrigações fiscais..."></textarea>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="goStep(1)">← Voltar</button>
+          <button class="btn btn-primary" onclick="nextStep(2)">Próximo →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3: OBJETIVOS -->
+    <div class="step" id="step3">
+      <div class="card">
+        <div class="card-title">Objetivos e Metas</div>
+        <div class="card-sub">O playbook será construído em torno dessas metas.</div>
+
+        <div class="form-grid">
+          <div class="field full">
+            <label>Objetivos principais <span class="req">*</span></label>
+            <div class="tags" id="tg-obj">
+              <span class="tag" onclick="toggleTag(this)">Aumentar faturamento</span>
+              <span class="tag" onclick="toggleTag(this)">Reduzir horas trabalhadas</span>
+              <span class="tag" onclick="toggleTag(this)">Digitalizar processos</span>
+              <span class="tag" onclick="toggleTag(this)">Escalar sem contratar</span>
+              <span class="tag" onclick="toggleTag(this)">Virar assessoria estratégica</span>
+              <span class="tag" onclick="toggleTag(this)">Aumentar ticket médio</span>
+              <span class="tag" onclick="toggleTag(this)">Melhorar retenção de clientes</span>
+              <span class="tag" onclick="toggleTag(this)">Montar equipe sólida</span>
+            </div>
+          </div>
+          <div class="field">
+            <label>Meta de crescimento (12 meses): <span id="meta-val">50%</span></label>
+            <input type="range" id="f-meta" min="10" max="200" step="10" value="50"
+              oninput="document.getElementById('meta-val').textContent = this.value + '%'">
+          </div>
+          <div class="field">
+            <label>Prazo de implementação</label>
+            <select id="f-prazo">
+              <option>3 meses</option>
+              <option>6 meses</option>
+              <option selected>12 meses</option>
+              <option>24 meses</option>
+            </select>
+          </div>
+          <div class="field full">
+            <label>Serviços a ampliar</label>
+            <div class="tags" id="tg-serv">
+              <span class="tag" onclick="toggleTag(this)">BPO Financeiro</span>
+              <span class="tag" onclick="toggleTag(this)">Controladoria</span>
+              <span class="tag" onclick="toggleTag(this)">Consultoria Tributária</span>
+              <span class="tag" onclick="toggleTag(this)">Planejamento Empresarial</span>
+              <span class="tag" onclick="toggleTag(this)">Gestão de RH</span>
+              <span class="tag" onclick="toggleTag(this)">Relatórios Gerenciais</span>
+              <span class="tag" onclick="toggleTag(this)">Educação Financeira ao Cliente</span>
+            </div>
+          </div>
+          <div class="field full">
+            <label>Mensagem personalizada ao parceiro</label>
+            <textarea id="f-msg" placeholder="Ex: Acreditamos no potencial de transformação do seu escritório..." rows="2"></textarea>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="goStep(2)">← Voltar</button>
+          <button class="btn btn-primary" onclick="nextStep(3)">Próximo →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4: ESTRUTURA -->
+    <div class="step" id="step4">
+      <div class="card">
+        <div class="card-title">Estrutura do Playbook</div>
+        <div class="card-sub">Escolha os módulos. Todos seguem padrão ABNT com capa, índice e contra-capa obrigatórios.</div>
+
+        <div class="stats-row three">
+          <div class="stat-card"><div class="stat-val">ABNT</div><div class="stat-label">Norma NBR 6022</div></div>
+          <div class="stat-card"><div class="stat-val">PDF</div><div class="stat-label">Download imediato</div></div>
+          <div class="stat-card"><div class="stat-val">100%</div><div class="stat-label">Personalizado</div></div>
+        </div>
+
+        <div class="sec-list">
+          <label class="sec-item locked">
+            <input type="checkbox" checked disabled>
+            <div><div class="si-title">📄 Capa Personalizada</div><div class="si-desc">Nome do parceiro, escritório, data — obrigatório</div></div>
+          </label>
+          <label class="sec-item locked">
+            <input type="checkbox" checked disabled>
+            <div><div class="si-title">📑 Sumário e Apresentação</div><div class="si-desc">Índice ABNT + carta de apresentação personalizada</div></div>
+          </label>
+          <label class="sec-item">
+            <input type="checkbox" checked id="s1">
+            <div><div class="si-title">📊 Panorama do Mercado Contábil</div><div class="si-desc">Dados, tendências e oportunidades do setor no Brasil</div></div>
+          </label>
+          <label class="sec-item">
+            <input type="checkbox" checked id="s2">
+            <div><div class="si-title">🔍 Diagnóstico Personalizado</div><div class="si-desc">Análise das dores e oportunidades identificadas no formulário</div></div>
+          </label>
+          <label class="sec-item">
+            <input type="checkbox" checked id="s3">
+            <div><div class="si-title">🗺️ Mapa de Transformação</div><div class="si-desc">Roadmap em 3 fases: Organizar → Crescer → Escalar</div></div>
+          </label>
+          <label class="sec-item">
+            <input type="checkbox" checked id="s4">
+            <div><div class="si-title">📚 Caderno de Exercícios Práticos</div><div class="si-desc">Templates, worksheets e atividades com exemplos reais</div></div>
+          </label>
+          <label class="sec-item">
+            <input type="checkbox" checked id="s5">
+            <div><div class="si-title">📅 Agenda Estratégica 90 dias</div><div class="si-desc">Semana a semana — os primeiros 3 meses de transformação</div></div>
+          </label>
+          <label class="sec-item">
+            <input type="checkbox" id="s6">
+            <div><div class="si-title">💰 Calculadora de Precificação</div><div class="si-desc">Método para revisar e ampliar o ticket médio</div></div>
+          </label>
+          <label class="sec-item">
+            <input type="checkbox" id="s7">
+            <div><div class="si-title">🤝 Protocolo de Reunião com Cliente</div><div class="si-desc">Script e roteiro para reuniões de valor</div></div>
+          </label>
+          <label class="sec-item locked">
+            <input type="checkbox" checked disabled>
+            <div><div class="si-title">🎯 Contra-Capa e Próximos Passos</div><div class="si-desc">CTA, convite para parceria — obrigatório</div></div>
+          </label>
+        </div>
+
+        <div class="info-box">
+          💡 Padrão ABNT NBR 6022 · Times New Roman 12pt · Espaçamento 1,5 · Margens A4 · Numeração de páginas
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="goStep(3)">← Voltar</button>
+          <button class="btn btn-accent" onclick="gerarPlaybook()">✨ Gerar Playbook com IA</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 5: RESULTADO -->
+    <div class="step" id="step5">
+      <div class="card">
+        <div class="card-title" id="s5-title">Gerando seu Playbook...</div>
+        <div class="card-sub" id="s5-sub">A IA está criando o conteúdo personalizado.</div>
+
+        <!-- Loading -->
+        <div id="loading-wrap">
+          <div class="loading-box">
+            <div class="spinner"></div>
+            <div class="loading-msg" id="loading-msg">Iniciando geração...</div>
+            <div class="loading-progress">
+              <div class="loading-bar" id="loading-bar"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Output -->
+        <div class="playbook-output" id="playbook-output" style="display:none"></div>
+
+        <!-- Ações -->
+        <div id="output-actions" style="display:none">
+          <div class="btn-row" style="flex-wrap:wrap">
+            <button class="btn btn-secondary" onclick="goStep(4)">← Editar</button>
+            <button class="btn btn-primary" onclick="gerarPDF()" id="btn-pdf">⬇️ Baixar PDF</button>
+            <button class="btn btn-success" onclick="novoPlaybook()">+ Novo Playbook</button>
+            <button class="btn btn-secondary" onclick="showView('hist')">📁 Ver Histórico</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /view-criar -->
+
+  <!-- ========== VIEW: DASHBOARD ========== -->
+  <div class="view" id="view-dash">
+    <div class="stats-row four" id="dash-stats">
+      <div class="stat-card"><div class="stat-val" id="ds-total">0</div><div class="stat-label">Playbooks gerados</div></div>
+      <div class="stat-card"><div class="stat-val" id="ds-mes">0</div><div class="stat-label">Este mês</div></div>
+      <div class="stat-card"><div class="stat-val" id="ds-semana">0</div><div class="stat-label">Esta semana</div></div>
+      <div class="stat-card"><div class="stat-val" id="ds-vendedor">—</div><div class="stat-label">Top vendedor</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Distribuição por Segmento</div>
+      <div id="chart-segmentos" style="padding:.5rem 0"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Últimos 5 Envios</div>
+      <div id="dash-recentes"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="showView('hist')">Ver histórico completo →</button>
+    </div>
+  </div>
+
+  <!-- ========== VIEW: HISTÓRICO ========== -->
+  <div class="view" id="view-hist">
+    <div class="hist-toolbar">
+      <input type="text" id="hist-search" placeholder="Buscar por escritório ou responsável..." oninput="renderHistorico()">
+      <select id="hist-filtro" onchange="renderHistorico()">
+        <option value="">Todos os segmentos</option>
+        <option>Comércio</option><option>Serviços</option><option>Indústria</option>
+        <option>Misto</option><option>Agronegócio</option><option>Saúde / Clínicas</option>
+        <option>Construção Civil</option>
+      </select>
+      <button class="btn btn-secondary" onclick="exportCSV()" title="Exportar CSV">⬇️ CSV</button>
+      <button class="btn btn-danger" onclick="limparHistorico()">🗑️ Limpar</button>
+    </div>
+    <div class="card" style="padding:.5rem">
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>#</th><th>Escritório</th><th>Responsável</th><th>Vendedor</th>
+              <th>Segmento</th><th>Data</th><th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="hist-body"></tbody>
+        </table>
+      </div>
+      <div id="hist-empty" class="empty-state" style="display:none">
+        <div class="empty-icon">📭</div>
+        <div>Nenhum playbook gerado ainda.</div>
+        <div class="empty-sub">Use a aba "Criar Playbook" para começar.</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<!-- PDF MODAL -->
+<div class="modal-overlay" id="pdf-modal" style="display:none">
+  <div class="modal">
+    <h2 id="pdf-m-title">Gerando PDF...</h2>
+    <p id="pdf-m-desc">Formatando o playbook em padrão ABNT.</p>
+    <div class="pdf-progress">
+      <div class="pdf-bar" id="pdf-bar"></div>
+    </div>
+    <div class="pdf-step" id="pdf-step">Preparando documento...</div>
+    <div class="btn-row" id="pdf-actions" style="display:none">
+      <button class="btn btn-secondary" onclick="closePdfModal()">Fechar</button>
+      <a id="pdf-link" class="btn btn-success" style="text-decoration:none" download>⬇️ Baixar PDF</a>
+    </div>
+  </div>
+</div>
+
+<script src="/js/storage.js"></script>
+<script src="/js/pdf.js"></script>
+<script src="/js/app.js"></script>
+
+</body>
+</html>
