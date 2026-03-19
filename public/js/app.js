@@ -100,7 +100,7 @@ function buildPrompt(d) {
   if (d.secoes.panorama)     secoes += '\n- Panorama do Mercado Contábil Brasileiro (com dados estatísticos reais do setor)';
   if (d.secoes.diagnostico)  secoes += '\n- Diagnóstico Personalizado baseado nas dores informadas';
   if (d.secoes.mapa)         secoes += '\n- Mapa de Transformação em 3 fases (Organizar / Crescer / Escalar)';
-  if (d.secoes.caderno)      secoes += '\n- Caderno de Exercícios Práticos (mín. 3 exercícios com tabelas preenchíveis)';
+  if (d.secoes.caderno)      secoes += '\n- Caderno de Exercícios Práticos (3 exercícios COMPLETOS e já respondidos com exemplos reais — NUNCA deixe lacunas ou espaços em branco para preencher)';
   if (d.secoes.agenda)       secoes += '\n- Agenda Estratégica 90 dias (semana a semana)';
   if (d.secoes.precificacao) secoes += '\n- Calculadora de Precificação (método para revisar ticket médio)';
   if (d.secoes.protocolo)    secoes += '\n- Protocolo de Reunião com Cliente (script e roteiro)';
@@ -140,14 +140,16 @@ ${secoes}
 
 PROPÓSITO CENTRAL: Transformar e Potencializar Contabilidades
 
-INSTRUÇÕES DE CRIAÇÃO:
-1. Use dados reais: Brasil tem +600mil contadores, mercado +R$60bi, 70% são "fábricas de obrigações"
-2. Diagnóstico cirúrgico para as dores: ${d.dores}
-3. Roadmap em 3 fases com marcos mensuráveis e prazos
-4. Exercícios com tabelas preenchíveis (use markdown: | col1 | col2 |)
-5. Agenda semana a semana das primeiras 4 semanas
-6. Contra-capa com próximos passos concretos e CTA de parceria
-7. Tom: profissional, empático, motivador — o parceiro deve sentir exclusividade`;
+REGRAS CRÍTICAS:
+1. NUNCA escreva "INSTRUÇÃO:", "Defina aqui", "Preencha", "Espaço para" ou qualquer meta-instrução. O documento é entregue diretamente ao cliente.
+2. TODO conteúdo deve estar escrito e completo com exemplos reais. NUNCA deixe seção com título vazio ou sem conteúdo.
+3. Exercícios: escreva o enunciado E a resposta com dados reais para ${d.escritorio}. Ex: "Exercício 1 — seus 5 principais serviços: 1. Contabilidade mensal R$800, 2. IRPF R$350..."
+4. Serviços Premium: sugira 3 serviços reais para o segmento ${d.segmento} com nome, descrição e faixa de preço.
+5. Use dados reais: Brasil +600mil contadores, mercado +R$60bi, 70% são fábricas de obrigações.
+6. Diagnóstico específico para as dores: ${d.dores}.
+7. Agenda: 3-4 ações concretas por semana, específicas e aplicáveis.
+8. Tom: profissional, empático, motivador. O parceiro deve sentir exclusividade.
+9. Formatação: use apenas # para títulos e - para bullets. Sem tabelas markdown.`;
 }
 
 // ── LOADING MESSAGES ──────────────────────────────────────────────

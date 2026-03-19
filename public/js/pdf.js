@@ -5,6 +5,19 @@ let ultimoRegistroId = null;
 
 function limparTexto(text) {
   return text
+    .split('\n')
+    .filter(linha => {
+      const l = linha.trim();
+      // Remove linhas de meta-instrução que não devem aparecer no PDF
+      if (/^INSTRUC[AÃ]O:/i.test(l)) return false;
+      if (/^Defina aqui/i.test(l)) return false;
+      if (/^Preencha/i.test(l)) return false;
+      if (/^\[.*\]$/.test(l)) return false; // remove [placeholders]
+      if (/^_{3,}$/.test(l)) return false; // remove ___
+      if (/^\*{3,}$/.test(l)) return false; // remove ***
+      return true;
+    })
+    .join('\n')
     .replace(/^#{1,6}\s+/gm, '')
     .replace(/\*\*(.+?)\*\*/g, '$1')
     .replace(/\*(.+?)\*/g, '$1')
