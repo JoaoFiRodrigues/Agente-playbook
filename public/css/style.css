@@ -6,8 +6,8 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --brand:    #1B3A6B;
-  --brand2:   #2A5298;
+  --brand:    #661081;
+  --brand2:   #f19800;
   --accent:   #C8963C;
   --acc2:     #E8B55A;
   --ok:       #1a7a4a;
