@@ -132,7 +132,7 @@ async function desenharPaginaOferta(doc, W, H, ML, MR, TW) {
   doc.setFillColor(...COR.laranja);
   doc.roundedRect(ML, 24, TW, 14, 4, 4, 'F');
   setFont(doc, 'bold', 14, COR.branco);
-  doc.text('30 DIAS GRATIS — ESCANEIE E COMECE AGORA', W/2, 33, { align: 'center' });
+  doc.text('30 DIAS GRATIS - PLATAFORMA DE ASSINATURA DIGITAL', W/2, 33, { align: 'center' });
 
   // Tenta gerar QR com QRious
   const qrBase64 = await gerarQRBase64(WA_URL);
@@ -185,10 +185,6 @@ async function desenharPaginaOferta(doc, W, H, ML, MR, TW) {
   setFont(doc, 'normal', 9, [90, 90, 90]);
   doc.text('Aponte a camera do celular para o QR Code e fale com nossa equipe', W/2, qrBottom + 2, { align: 'center' });
 
-  // Link visível
-  setFont(doc, 'normal', 8, COR.roxo);
-  doc.text('wa.me/551936018499', W/2, qrBottom + 8, { align: 'center' });
-
   // ── JORNADA DO CLIENTE ─────────────────────────────────────────
   const jornadaY = qrBottom + 18;
 
@@ -196,7 +192,7 @@ async function desenharPaginaOferta(doc, W, H, ML, MR, TW) {
   doc.setFillColor(...COR.roxo);
   doc.rect(ML, jornadaY, TW, 12, 'F');
   setFont(doc, 'bold', 11, COR.branco);
-  doc.text('JORNADA DO CLIENTE CARDSINOVA', W/2, jornadaY + 8, { align: 'center' });
+  doc.text('NOSSOS PRODUTOS', W/2, jornadaY + 8, { align: 'center' });
 
   const jornada = [
     { cor: COR.topoRoxo,  icone: 'TOPO',        nome: 'Mentoria Fernando Muterle',   desc: 'Alta transformacao, relacao 1:1' },
