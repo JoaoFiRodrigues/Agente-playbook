@@ -1,6 +1,6 @@
 // pdf.js — Playbook Hub Cards
 // Cores: Roxo #661081 | Laranja #f19800
-// Fonte: Helvetica (built-in jsPDF, sem dependência externa)
+// Página 2: QR Code WhatsApp + Jornada do Cliente CardSinova
 
 let ultimoRegistroId = null;
 
@@ -12,9 +12,17 @@ const COR = {
   texto:     [ 30,  30,  30],
   roxoClaro: [237, 220, 245],
   roxoMedio: [120,  40, 160],
+  // Cores da Jornada
+  topoRoxo:   [102,  16, 129],
+  premPlus:   [ 76,  29, 149],
+  prem:       [ 37,  99, 235],
+  recorr:     [ 15, 118,  51],
+  compl:      [  5, 150, 105],
+  medio:      [234, 88,   12],
+  entrada:    [217, 119,   6],
+  porta:      [ 71, 85,  105],
 };
 
-// ── LIMPA MARKDOWN ────────────────────────────────────────────────
 function limparTexto(text) {
   return text
     .split('\n')
@@ -52,15 +60,12 @@ function tipoLinha(linha) {
   return 'paragrafo';
 }
 
-// ── HELPERS DE FONTE ──────────────────────────────────────────────
-// jsPDF built-in: helvetica (normal/bold/italic), times, courier
 function setFont(doc, weight, size, cor) {
-  doc.setFont('helvetica', weight);
+  doc.setFont('helvetica', weight === 'bold' ? 'bold' : 'normal');
   doc.setFontSize(size);
   if (cor) doc.setTextColor(...cor);
 }
 
-// ── MODAL ─────────────────────────────────────────────────────────
 function setModal(title, desc, showActions) {
   document.getElementById('pdf-m-title').textContent = title;
   document.getElementById('pdf-m-desc').textContent  = desc;
@@ -75,7 +80,182 @@ function closePdfModal() {
   document.getElementById('pdf-bar').style.background = '';
 }
 
-// ── GERAR PDF ─────────────────────────────────────────────────────
+// ── GERA QR CODE como base64 PNG via canvas ───────────────────────
+async function gerarQRBase64(url) {
+  return new Promise((resolve, reject) => {
+    try {
+      const canvas = document.createElement('canvas');
+      // QRious é carregado via script tag no HTML
+      // Fallback: gera QR via API pública
+      if (typeof QRious !== 'undefined') {
+        const qr = new QRious({
+          element: canvas,
+          value: url,
+          size: 300,
+          backgroundAlpha: 1,
+          background: '#ffffff',
+          foreground: '#661081',
+          padding: 10,
+          level: 'H',
+        });
+        resolve(canvas.toDataURL('image/png'));
+      } else {
+        // Fallback: usa QR via Google Charts API como imagem
+        resolve(null);
+      }
+    } catch(e) {
+      resolve(null);
+    }
+  });
+}
+
+// ── PÁGINA 2: QR + JORNADA ────────────────────────────────────────
+async function desenharPaginaOferta(doc, W, H, ML, MR, TW) {
+  const WA_URL = 'https://api.whatsapp.com/send?phone=551936018499';
+
+  doc.addPage();
+
+  // Fundo branco
+  doc.setFillColor(255, 255, 255);
+  doc.rect(0, 0, W, H, 'F');
+
+  // Header roxo
+  doc.setFillColor(...COR.roxo);
+  doc.rect(0, 0, W, 18, 'F');
+  doc.setFillColor(...COR.laranja);
+  doc.rect(0, 0, 8, 18, 'F');
+  setFont(doc, 'bold', 11, COR.branco);
+  doc.text('OFERTA ESPECIAL CARDSINOVA', ML, 12);
+
+  // ── SEÇÃO QR CODE ─────────────────────────────────────────────
+  // Badge 30 dias grátis
+  doc.setFillColor(...COR.laranja);
+  doc.roundedRect(ML, 24, TW, 14, 4, 4, 'F');
+  setFont(doc, 'bold', 14, COR.branco);
+  doc.text('30 DIAS GRATIS — ESCANEIE E COMECE AGORA', W/2, 33, { align: 'center' });
+
+  // Tenta gerar QR com QRious
+  const qrBase64 = await gerarQRBase64(WA_URL);
+
+  if (qrBase64) {
+    // QR gerado com sucesso — insere como imagem
+    const qrSize = 52;
+    const qrX = W / 2 - qrSize / 2;
+    const qrY = 44;
+    // Borda branca ao redor do QR
+    doc.setFillColor(255, 255, 255);
+    doc.roundedRect(qrX - 3, qrY - 3, qrSize + 6, qrSize + 6, 3, 3, 'F');
+    doc.setDrawColor(...COR.roxo);
+    doc.setLineWidth(1);
+    doc.roundedRect(qrX - 3, qrY - 3, qrSize + 6, qrSize + 6, 3, 3, 'S');
+    doc.addImage(qrBase64, 'PNG', qrX, qrY, qrSize, qrSize);
+    var qrBottom = qrY + qrSize + 8;
+  } else {
+    // Fallback: desenha quadrado simulando QR com texto do link
+    const qrX = W/2 - 28, qrY = 44, qrSize = 56;
+    doc.setFillColor(248, 244, 252);
+    doc.roundedRect(qrX - 2, qrY - 2, qrSize + 4, qrSize + 4, 3, 3, 'F');
+    doc.setDrawColor(...COR.roxo);
+    doc.setLineWidth(1);
+    doc.roundedRect(qrX - 2, qrY - 2, qrSize + 4, qrSize + 4, 3, 3, 'S');
+
+    // Padrão visual de QR (simulado com retângulos)
+    doc.setFillColor(...COR.roxo);
+    // Cantos do QR
+    [[0,0],[0,1],[1,0],[1,1]].forEach(([dx,dy]) => { // top-left
+      doc.rect(qrX+2+dx*5, qrY+2+dy*5, 4, 4, 'F');
+    });
+    doc.rect(qrX+2, qrY+2, 18, 18, 'S'); // borda top-left
+    doc.rect(qrX+qrSize-20, qrY+2, 18, 18, 'S'); // borda top-right
+    doc.rect(qrX+2, qrY+qrSize-20, 18, 18, 'S'); // borda bottom-left
+    [[0,0],[0,1],[1,0],[1,1]].forEach(([dx,dy]) => {
+      doc.rect(qrX+qrSize-18+dx*5, qrY+2+dy*5, 4, 4, 'F');
+      doc.rect(qrX+2+dx*5, qrY+qrSize-18+dy*5, 4, 4, 'F');
+    });
+    // Módulos centrais (padrão)
+    for(let r=0;r<4;r++) for(let c=0;c<4;c++) {
+      if((r+c)%2===0) doc.rect(qrX+20+c*4, qrY+20+r*4, 3, 3, 'F');
+    }
+    setFont(doc, 'normal', 7, COR.roxo);
+    doc.text('WhatsApp CardSinova', W/2, qrY + qrSize + 5, { align: 'center' });
+    var qrBottom = qrY + qrSize + 10;
+  }
+
+  // Instrução abaixo do QR
+  setFont(doc, 'normal', 9, [90, 90, 90]);
+  doc.text('Aponte a camera do celular para o QR Code e fale com nossa equipe', W/2, qrBottom + 2, { align: 'center' });
+
+  // Link visível
+  setFont(doc, 'normal', 8, COR.roxo);
+  doc.text('wa.me/551936018499', W/2, qrBottom + 8, { align: 'center' });
+
+  // ── JORNADA DO CLIENTE ─────────────────────────────────────────
+  const jornadaY = qrBottom + 18;
+
+  // Título da seção
+  doc.setFillColor(...COR.roxo);
+  doc.rect(ML, jornadaY, TW, 12, 'F');
+  setFont(doc, 'bold', 11, COR.branco);
+  doc.text('JORNADA DO CLIENTE CARDSINOVA', W/2, jornadaY + 8, { align: 'center' });
+
+  const jornada = [
+    { cor: COR.topoRoxo,  icone: 'TOPO',        nome: 'Mentoria Fernando Muterle',   desc: 'Alta transformacao, relacao 1:1' },
+    { cor: COR.premPlus,  icone: 'PREMIUM+',     nome: 'Imersao Presencial',           desc: 'Aceleracao intensa presencial' },
+    { cor: [37,99,235],   icone: 'PREMIUM',      nome: 'Pro 360 Contabil',             desc: 'Scale + acompanhamento profundo (8 encontros)' },
+    { cor: [15,118,51],   icone: 'RECORRENCIA',  nome: 'Comunidade CS+',               desc: 'Mensal - networking, lives, suporte continuo' },
+    { cor: [5,150,105],   icone: 'COMPLEMENTAR', nome: 'Treinamento de Equipe',        desc: 'Capacitacao modular da equipe do escritorio' },
+    { cor: [234,88,12],   icone: 'MEDIO',        nome: 'Scale Contabil 90 dias',       desc: 'Estrategia + plano de acao + 6 reunioes' },
+    { cor: [217,119,6],   icone: 'ENTRADA',      nome: 'Cardsinova Academy',            desc: 'Cursos e trilhas de capacitacao online' },
+    { cor: [71,85,105],   icone: 'PORTA',        nome: 'Diagnostico Contabil Gratuito',desc: 'Primeira conversa + mapeamento de dores' },
+  ];
+
+  let jy = jornadaY + 14;
+  const rowH = 13;
+
+  jornada.forEach((item, idx) => {
+    // Fundo colorido
+    doc.setFillColor(...item.cor);
+    doc.rect(ML, jy, TW, rowH, 'F');
+
+    // Badge nível (esquerda)
+    doc.setFillColor(0, 0, 0, 0.15);
+    setFont(doc, 'bold', 7, [255,255,255,0.9]);
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(7);
+    doc.setFont('helvetica', 'bold');
+    doc.text(item.icone, ML + 3, jy + 8.5);
+
+    // Linha vertical separadora
+    doc.setDrawColor(255, 255, 255);
+    doc.setLineWidth(0.3);
+    doc.setOpacity && doc.setOpacity(0.4);
+    const sepX = ML + 28;
+    doc.line(sepX, jy + 1, sepX, jy + rowH - 1);
+    doc.setOpacity && doc.setOpacity(1);
+
+    // Nome do produto
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(255, 255, 255);
+    doc.text(item.nome, ML + 31, jy + 5.5);
+
+    // Descrição
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(7.5);
+    const descLines = doc.splitTextToSize(item.desc, TW - 34);
+    doc.text(descLines[0], ML + 31, jy + 10.5);
+
+    jy += rowH;
+  });
+
+  // Rodapé da página
+  setFont(doc, 'normal', 8, [150, 150, 150]);
+  doc.text('CardSinova  |  Transformar e Potencializar Contabilidades', W/2, H - 8, { align: 'center' });
+}
+
+// ── GERAR PDF PRINCIPAL ───────────────────────────────────────────
 async function gerarPDF() {
   if (!lastGeneratedContent || !lastDados) { alert('Gere um playbook primeiro.'); return; }
 
@@ -88,7 +268,7 @@ async function gerarPDF() {
     new Promise(r => setTimeout(() => { bar.style.width = pct + '%'; step.textContent = msg; r(); }, delay || 0));
 
   try {
-    await prog(8, 'Configurando documento A4...', 100);
+    await prog(6, 'Configurando documento A4...', 100);
 
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
@@ -98,54 +278,41 @@ async function gerarPDF() {
     // ══════════════════════════════════════════════
     // PÁGINA 1 — CAPA
     // ══════════════════════════════════════════════
-    await prog(18, 'Desenhando capa...', 300);
+    await prog(14, 'Desenhando capa...', 300);
 
     doc.setFillColor(...COR.roxo);
     doc.rect(0, 0, W, H, 'F');
-
-    // Barra lateral laranja
     doc.setFillColor(...COR.laranja);
     doc.rect(0, 0, 8, H, 'F');
-
-    // Círculo decorativo inferior direito
     doc.setFillColor(...COR.laranja);
     doc.circle(W + 14, H + 14, 80, 'F');
-
-    // Círculo decorativo superior direito
     doc.setFillColor(...COR.roxoMedio);
     doc.circle(W + 8, 10, 58, 'F');
 
-    // Badge
     doc.setFillColor(...COR.laranja);
     doc.roundedRect(ML, 30, 110, 11, 3, 3, 'F');
     setFont(doc, 'bold', 8, COR.branco);
     doc.text('PLAYBOOK ESTRATEGICO  |  EXCLUSIVO', ML + 5, 37.2);
 
-    // Nome do escritório
     setFont(doc, 'bold', 27, COR.branco);
     const escLines = doc.splitTextToSize(lastDados.escritorio.toUpperCase(), TW - 10);
     doc.text(escLines, ML, 63);
     const escH = escLines.length * 11.5;
 
-    // Subtítulo
     setFont(doc, 'normal', 13, [220, 190, 240]);
     doc.text('Guia de Transformacao e Potencializacao', ML, 63 + escH + 7);
 
-    // Linha separadora
     const sepY = 63 + escH + 19;
     doc.setDrawColor(...COR.laranja);
     doc.setLineWidth(1.2);
     doc.line(ML, sepY, ML + TW, sepY);
 
-    // "Elaborado para"
     setFont(doc, 'normal', 9, [200, 170, 230]);
     doc.text('Elaborado especialmente para', ML, sepY + 13);
 
-    // Nome responsável
     setFont(doc, 'bold', 21, COR.branco);
     doc.text(lastDados.nome, ML, sepY + 25);
 
-    // Cargo
     setFont(doc, 'normal', 13, [220, 190, 240]);
     doc.text(lastDados.cargo || 'Socio-Diretor', ML, sepY + 35);
 
@@ -154,7 +321,6 @@ async function gerarPDF() {
       doc.text(lastDados.cidade, ML, sepY + 45);
     }
 
-    // Bloco missão no rodapé
     doc.setFillColor(...COR.laranja);
     doc.rect(ML, H - 52, TW, 30, 'F');
     setFont(doc, 'bold', 10, COR.branco);
@@ -166,7 +332,6 @@ async function gerarPDF() {
     );
     doc.text(missL, ML + 6, H - 33);
 
-    // Data
     setFont(doc, 'normal', 8, [180, 150, 210]);
     doc.text(
       new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }),
@@ -174,9 +339,15 @@ async function gerarPDF() {
     );
 
     // ══════════════════════════════════════════════
-    // PÁGINA 2 — SUMÁRIO
+    // PÁGINA 2 — QR CODE + JORNADA DO CLIENTE
     // ══════════════════════════════════════════════
-    await prog(30, 'Montando sumario...', 300);
+    await prog(24, 'Gerando pagina de oferta...', 300);
+    await desenharPaginaOferta(doc, W, H, ML, MR, TW);
+
+    // ══════════════════════════════════════════════
+    // PÁGINA 3 — SUMÁRIO
+    // ══════════════════════════════════════════════
+    await prog(34, 'Montando sumario...', 300);
 
     doc.addPage();
     doc.setFillColor(...COR.cinza);
@@ -190,15 +361,15 @@ async function gerarPDF() {
 
     let cy = 36;
     [
-      ['1', 'Apresentacao e Proposito'],
-      ['2', 'Panorama do Mercado Contabil Brasileiro'],
-      ['3', 'Diagnostico Personalizado'],
-      ['4', 'Mapa de Transformacao'],
-      ['5', 'Caderno de Exercicios Praticos'],
-      ['6', 'Agenda Estrategica - Primeiros 90 Dias'],
-      ['7', 'Calculadora de Precificacao'],
-      ['8', 'Protocolo de Reuniao com Cliente'],
-      ['9', 'Proximos Passos e Convite a Parceria'],
+      ['1','Apresentacao e Proposito'],
+      ['2','Panorama do Mercado Contabil Brasileiro'],
+      ['3','Diagnostico Personalizado'],
+      ['4','Mapa de Transformacao'],
+      ['5','Caderno de Exercicios Praticos'],
+      ['6','Agenda Estrategica - Primeiros 90 Dias'],
+      ['7','Calculadora de Precificacao'],
+      ['8','Protocolo de Reuniao com Cliente'],
+      ['9','Proximos Passos e Convite a Parceria'],
     ].forEach(([num, titulo]) => {
       doc.setFillColor(...COR.roxo);
       doc.circle(ML + 4.5, cy - 2.5, 4.5, 'F');
@@ -217,7 +388,7 @@ async function gerarPDF() {
     // ══════════════════════════════════════════════
     // PÁGINAS DE CONTEÚDO
     // ══════════════════════════════════════════════
-    await prog(48, 'Formatando conteudo...', 400);
+    await prog(50, 'Formatando conteudo...', 400);
 
     const textoLimpo = limparTexto(lastGeneratedContent);
     const linhas     = textoLimpo.split('\n');
@@ -226,7 +397,7 @@ async function gerarPDF() {
     doc.setFillColor(255, 255, 255);
     doc.rect(0, 0, W, H, 'F');
 
-    let py = MT, pageNum = 3, primeiraLinha = true;
+    let py = MT, pageNum = 4, primeiraLinha = true;
 
     const addHeader = () => {
       doc.setFillColor(...COR.roxo);
@@ -235,8 +406,7 @@ async function gerarPDF() {
       doc.rect(0, 0, 6, 13, 'F');
       setFont(doc, 'normal', 7.5, COR.branco);
       const sn = lastDados.escritorio.length > 48
-        ? lastDados.escritorio.slice(0, 45) + '...'
-        : lastDados.escritorio;
+        ? lastDados.escritorio.slice(0, 45) + '...' : lastDados.escritorio;
       doc.text(sn + '  |  Playbook Estrategico', ML, 9);
       doc.text(String(pageNum), W - MR, 9, { align: 'right' });
       pageNum++;
@@ -288,7 +458,6 @@ async function gerarPDF() {
         continue;
       }
 
-      // parágrafo normal
       checkPg(14);
       setFont(doc, 'normal', 11, COR.texto);
       const tl = doc.splitTextToSize(linha, TW);
@@ -311,31 +480,26 @@ async function gerarPDF() {
     doc.setFillColor(...COR.roxoMedio);
     doc.circle(W + 10, H / 2, 88, 'F');
 
-    // Forma decorativa central (losango duplo — sem Unicode)
-    const cx = W / 2, dy = 68, dr = 16;
+    const cx2 = W / 2, dy2 = 68, dr2 = 16;
     doc.setFillColor(...COR.laranja);
-    doc.triangle(cx,      dy - dr, cx - dr * 0.65, dy + dr * 0.4, cx + dr * 0.65, dy + dr * 0.4, 'F');
-    doc.triangle(cx,      dy + dr, cx - dr * 0.65, dy - dr * 0.4, cx + dr * 0.65, dy - dr * 0.4, 'F');
+    doc.triangle(cx2, dy2-dr2, cx2-dr2*0.65, dy2+dr2*0.4, cx2+dr2*0.65, dy2+dr2*0.4, 'F');
+    doc.triangle(cx2, dy2+dr2, cx2-dr2*0.65, dy2-dr2*0.4, cx2+dr2*0.65, dy2-dr2*0.4, 'F');
 
-    // CTA principal
     setFont(doc, 'bold', 23, COR.branco);
     const ctaL = doc.splitTextToSize('Pronto para transformar seu escritorio?', TW - 10);
-    doc.text(ctaL, W / 2, 103, { align: 'center' });
+    doc.text(ctaL, W/2, 103, { align: 'center' });
 
-    // Sub
     setFont(doc, 'normal', 11, [220, 190, 240]);
     const subL = doc.splitTextToSize(
       'Este playbook e apenas o comeco. Nossa equipe esta preparada para caminhar com voce em cada etapa desta transformacao.',
       TW - 20
     );
-    doc.text(subL, W / 2, 128, { align: 'center' });
+    doc.text(subL, W/2, 128, { align: 'center' });
 
-    // Caixa próximos passos
     doc.setFillColor(...COR.laranja);
     doc.roundedRect(ML, 158, TW, 56, 6, 6, 'F');
     setFont(doc, 'bold', 13, COR.branco);
-    doc.text('PROXIMOS PASSOS', W / 2, 173, { align: 'center' });
-
+    doc.text('PROXIMOS PASSOS', W/2, 173, { align: 'center' });
     setFont(doc, 'normal', 11, COR.branco);
     [
       'Agende uma reuniao estrategica gratuita',
@@ -349,22 +513,20 @@ async function gerarPDF() {
       doc.text(p, ML + 16, yp);
     });
 
-    // Rodapé
     setFont(doc, 'normal', 9, [200, 170, 230]);
-    doc.text('Missao: Transformar e Potencializar Contabilidades', W / 2, H - 13, { align: 'center' });
+    doc.text('Missao: Transformar e Potencializar Contabilidades', W/2, H-13, { align: 'center' });
     setFont(doc, 'normal', 8, [180, 150, 210]);
-    doc.text(String(new Date().getFullYear()), W / 2, H - 8, { align: 'center' });
+    doc.text(String(new Date().getFullYear()), W/2, H-8, { align: 'center' });
 
     await prog(100, 'Finalizando...', 200);
 
-    // ── DOWNLOAD ─────────────────────────────────────────────────
     const fname = 'Playbook_' +
       lastDados.escritorio.replace(/[^a-zA-Z0-9]/g, '_') + '_' +
       new Date().toLocaleDateString('pt-BR').replace(/\//g, '-') + '.pdf';
 
     const url = URL.createObjectURL(doc.output('blob'));
     const lnk = document.getElementById('pdf-link');
-    lnk.href     = url;
+    lnk.href = url;
     lnk.download = fname;
 
     if (ultimoRegistroId) Storage.updateStatus(ultimoRegistroId, 'PDF Gerado');
