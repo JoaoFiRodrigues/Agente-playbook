@@ -233,13 +233,15 @@ function rxBuildPrompt(emp) {
   const hoje = new Date().toLocaleDateString('pt-BR', { day:'2-digit', month:'long', year:'numeric' });
 
   return `Você é o Fernando Muterle, especialista em transformação de escritórios contábeis no Brasil.
-Com base nas respostas do Check-up Contábil 2026 abaixo, crie um PLAYBOOK PERSONALIZADO completo e profissional.
+Com base nas respostas do Check-up Contábil 2026, crie um PLAYBOOK COMPLETO E EXTENSO de pelo menos 15 páginas A4.
+Escreva com profundidade real — cada seção deve ter parágrafos completos, exemplos concretos e análises detalhadas.
+NUNCA seja genérico. Cite o nome da empresa e dados reais das respostas em todo o documento.
 
 EMPRESA: ${r[COLS.escritorio]}
 CIDADE: ${r[COLS.cidade]}
 DATA: ${hoje}
 
-=== RESPOSTAS DO CHECK-UP ===
+=== DADOS DO CHECK-UP ===
 
 PERFIL:
 - Tempo de existência: ${r[COLS.tempoExiste]}
@@ -249,155 +251,251 @@ PERFIL:
 
 GESTÃO E PROCESSOS:
 - Processos documentados: ${r[COLS.processos]}
-- Nota de organização interna (0-10): ${r[COLS.orgNota]}
+- Nota de organização (0-10): ${r[COLS.orgNota]}
 - Lideranças por área: ${r[COLS.liderancas]}
 - Reuniões de equipe: ${r[COLS.reunioes]}
 - Maior dor de gestão: ${r[COLS.dorGestao]}
 
-COMERCIAL E CRESCIMENTO:
+COMERCIAL:
 - Responsável por vendas: ${r[COLS.vendedor]}
 - Acompanha indicadores: ${r[COLS.indicadores]}
 - Conhece ticket médio: ${r[COLS.ticketMedio]}
-- Metas para 2026: ${r[COLS.metas2026]}
-- O que mudar na relação com clientes: ${r[COLS.mudancaCliente]}
+- Metas 2026: ${r[COLS.metas2026]}
+- O que mudar com clientes: ${r[COLS.mudancaCliente]}
 
 PRODUTOS E SERVIÇOS:
-- Serviços além do básico: ${r[COLS.servicosAlem]}
+- Serviços atuais além do básico: ${r[COLS.servicosAlem]}
 - Interesse em novos serviços: ${r[COLS.novosServicos]}
 - Serviço que quer lançar: ${r[COLS.novoServico]}
 
 REFORMA TRIBUTÁRIA:
 - Nível de conhecimento: ${r[COLS.reformaNivel]}
-- Comunicou para clientes: ${r[COLS.reformaComun]}
+- Comunicou clientes: ${r[COLS.reformaComun]}
 - Maior preocupação: ${r[COLS.reformaPreoc]}
 
-POSICIONAMENTO E MARCA:
-- Como clientes enxergam o escritório: ${r[COLS.percepcaoCliente]}
+POSICIONAMENTO:
+- Como clientes enxergam: ${r[COLS.percepcaoCliente]}
 - Produz conteúdo: ${r[COLS.conteudo]}
 - Diferencial percebido: ${r[COLS.diferencial]}
 
-VISÃO E PRONTIDÃO:
-- Visão para dezembro 2026: ${r[COLS.visao2026]}
+VISÃO:
+- Visão dezembro 2026: ${r[COLS.visao2026]}
 - Disposição para mudar (0-10): ${r[COLS.disposicao]}
-- Informação extra: ${r[COLS.infoExtra]}
+- Info extra: ${r[COLS.infoExtra]}
 
-=== ESTRUTURA DO PLAYBOOK ===
-
-Gere o playbook com EXATAMENTE estas seções na ordem abaixo:
+=== ESTRUTURA DO PLAYBOOK (MÍNIMO 15 PÁGINAS) ===
 
 # PLAYBOOK ESTRATÉGICO — ${r[COLS.escritorio]}
 
-## INTRODUÇÃO
-Escreva uma introdução calorosa e personalizada de 3 parágrafos dirigida ao dono do escritório.
-Parágrafo 1: Contextualize o momento atual do mercado contábil brasileiro e por que 2026 é decisivo.
-Parágrafo 2: Fale sobre o que você enxergou nas respostas de ${r[COLS.escritorio]} — cite dados reais que ele informou (faturamento, tempo de existência, equipe, regimes, serviços atuais).
-Parágrafo 3: Explique o que este playbook vai entregar e como usar na prática.
+## 1. INTRODUÇÃO
+Escreva 5 parágrafos completos e ricos:
 
-## ANÁLISE DE DADOS DO ESCRITÓRIO
-Faça uma análise profunda e honesta com base nos números e dados reais informados.
+Parágrafo 1 — O momento do mercado contábil brasileiro em 2026: explique as mudanças do setor, a reforma tributária, a digitalização, o avanço das contabilidades digitais e por que os próximos 12 meses são decisivos para escritórios tradicionais. Use dados reais do setor (mais de 600 mil contadores no Brasil, mercado de R$60 bilhões, 70% ainda operam como fábricas de obrigações).
 
-- Faturamento atual (${r[COLS.faturamento]}) e o que isso representa no mercado contábil
-- Ticket médio estimado: com ${r[COLS.colaboradores]} colaboradores e faturamento de ${r[COLS.faturamento]}, calcule o ticket médio por cliente e compare com o benchmark do setor (ticket médio nacional gira em torno de R$ 600 a R$ 1.200/cliente/mês)
-- Capacidade produtiva: análise da relação colaboradores x clientes x faturamento
-- Gargalos financeiros identificados: cite as respostas sobre processos (${r[COLS.processos]}), indicadores (${r[COLS.indicadores]}) e ticket médio (${r[COLS.ticketMedio]})
-- Oportunidade de receita não capturada: quanto este escritório está deixando na mesa com base no perfil atual
-- Avaliação da organização interna: nota ${r[COLS.orgNota]}/10 — o que isso impacta no faturamento
-- Resumo: 3 números que definem o momento atual do escritório
+Parágrafo 2 — O perfil de ${r[COLS.escritorio]}: contextualize o escritório dentro do mercado. Fale sobre o tempo de existência (${r[COLS.tempoExiste]}), a equipe (${r[COLS.colaboradores]} colaboradores), o faturamento atual (${r[COLS.faturamento]}), os regimes atendidos (${r[COLS.regimes]}) e os serviços que já oferece (${r[COLS.servicosAlem]}). Mostre que você entende a realidade deles.
 
-## PLANO DE NOVOS PRODUTOS
-Com base no nicho, regimes atendidos (${r[COLS.regimes]}), serviços atuais (${r[COLS.servicosAlem]}) e o serviço que quer lançar (${r[COLS.novoServico]}), apresente 2 produtos novos altamente adequados para este escritório.
+Parágrafo 3 — O que as respostas revelaram: fale sobre os pontos que mais chamaram atenção no check-up — a dor de gestão (${r[COLS.dorGestao]}), a situação comercial (${r[COLS.vendedor]}), a nota de organização (${r[COLS.orgNota]}/10) e a visão de futuro (${r[COLS.visao2026]}). Seja direto e empático.
 
-Para cada produto siga EXATAMENTE esta estrutura:
+Parágrafo 4 — A oportunidade real: com base no perfil, mostre o potencial de crescimento que existe. Quanto este escritório poderia faturar com ajustes simples? Qual é o gap entre onde estão e onde poderiam estar em 12 meses?
 
-PRODUTO 1 — [Nome do Produto]
-- O que é: descrição em 2 linhas do que é o serviço
-- Por que faz sentido para ${r[COLS.escritorio]}: justificativa baseada nas respostas reais
-- Público-alvo dentro da base de clientes: qual perfil de cliente da carteira se beneficia mais
-- Como entregar: passo a passo simplificado de como operacionalizar
-- Precificação sugerida: faixa de preço com base no mercado e no porte do escritório
-- Potencial de receita adicional: estimativa mensal se 30% da base aderir
+Parágrafo 5 — Como usar este playbook: explique que o documento tem análise de dados, dois novos produtos prontos para lançar e um plano de ação semana a semana para 90 dias. Instrua o leitor a não apenas ler, mas executar.
 
-PRODUTO 2 — [Nome do Produto]
-- O que é: descrição em 2 linhas
-- Por que faz sentido para ${r[COLS.escritorio]}: justificativa baseada nas respostas reais
-- Público-alvo dentro da base de clientes
-- Como entregar: passo a passo simplificado
-- Precificação sugerida
-- Potencial de receita adicional
+## 2. ANÁLISE COMPLETA DE DADOS DO ESCRITÓRIO
+Esta seção deve ter pelo menos 4 páginas de conteúdo. Seja analítico, use cálculos reais e comparativos de mercado.
 
-## PLANO DE AÇÃO — 90 DIAS
-Plano semanal detalhado e prático. Para cada semana, escreva ações reais e específicas — não genéricas.
+### 2.1 Retrato Financeiro Atual
+- Faturamento mensal de ${r[COLS.faturamento]}: o que isso representa no contexto nacional (percentil do mercado, comparativo com escritórios do mesmo porte e cidade)
+- Estimativa de número de clientes na base: com base no faturamento e porte, estime quantos clientes o escritório deve ter
+- Ticket médio calculado: faça o cálculo real (faturamento ÷ estimativa de clientes) e compare com o benchmark nacional (R$ 600 a R$ 1.200/cliente/mês para escritórios de pequeno e médio porte)
+- Receita por colaborador: calcule e compare com o padrão do setor (R$ 8.000 a R$ 15.000/colaborador/mês em escritórios bem estruturados)
+- Análise da margem: considerando custos típicos de um escritório contábil (folha, sistemas, aluguel), estime a margem atual e o que seria saudável
 
-FASE 1 — ORGANIZAR (Semanas 1 a 4)
+### 2.2 Diagnóstico Operacional
+Analise cada ponto abaixo com pelo menos 3 linhas de conteúdo cada:
+- Processos e documentação: o que significa ter "${r[COLS.processos]}" no contexto de um escritório em crescimento. Quais riscos isso gera. Qual o impacto no faturamento e na capacidade de escalar.
+- Estrutura de liderança: "${r[COLS.liderancas]}" — o que isso diz sobre a dependência do sócio, o gargalo operacional e a dificuldade de crescer sem contratar.
+- Rituais de gestão: reuniões "${r[COLS.reunioes]}" — como isso impacta a produtividade e o alinhamento da equipe. O que escritórios de alta performance fazem diferente.
+- A maior dor: "${r[COLS.dorGestao]}" — aprofunde essa dor. Por que ela existe, quais são as consequências reais no dia a dia e no faturamento, e o que precisa mudar para resolvê-la.
 
-Semana 1 — [Tema da semana]:
-- Ação 1 com exemplo prático de como fazer
-- Ação 2 com exemplo prático
-- Ação 3 com exemplo prático
-Resultado esperado ao final da semana:
+### 2.3 Diagnóstico Comercial
+Analise com profundidade:
+- Ausência de estrutura comercial: "${r[COLS.vendedor]}" — o que acontece quando o sócio é o único vendedor. Calcule quantas horas por semana isso consome e o custo de oportunidade.
+- Indicadores comerciais: "${r[COLS.indicadores]}" — sem números, não há gestão. Quais indicadores este escritório deveria acompanhar hoje e por quê.
+- Conhecimento do ticket médio: "${r[COLS.ticketMedio]}" — o que isso revela sobre o controle financeiro do negócio.
+- Metas para 2026: "${r[COLS.metas2026]}" — analise se essa meta é compatível com a estrutura atual. O que precisaria mudar para atingi-la.
+- Oportunidade de receita não capturada: com base no perfil, calcule quanto este escritório está deixando de ganhar por mês (clientes que poderiam pagar mais, serviços que poderiam ser cobrados, reajustes atrasados).
 
-Semana 2 — [Tema da semana]:
-- Ação 1 com exemplo prático
-- Ação 2 com exemplo prático
-- Ação 3 com exemplo prático
-Resultado esperado ao final da semana:
+### 2.4 Diagnóstico de Posicionamento
+- Como os clientes enxergam o escritório: "${r[COLS.percepcaoCliente]}" — o que isso significa para o ticket médio, para a retenção e para a capacidade de vender novos serviços.
+- Produção de conteúdo: "${r[COLS.conteudo]}" — no mercado contábil atual, escritórios que educam seus clientes cobram até 40% mais. O que ${r[COLS.escritorio]} está perdendo.
+- Diferencial percebido: "${r[COLS.diferencial]}" — avalie se esse diferencial é forte o suficiente para justificar preço premium. O que poderia fortalecer o posicionamento.
+- Reforma tributária: nível "${r[COLS.reformaNivel]}" com preocupação "${r[COLS.reformaPreoc]}" — como isso se torna uma oportunidade comercial imediata.
 
-Semana 3 — [Tema da semana]:
-- Ação 1 com exemplo prático
-- Ação 2 com exemplo prático
-- Ação 3 com exemplo prático
-Resultado esperado ao final da semana:
+### 2.5 Números que Definem o Momento
+Crie um resumo com os 5 números mais importantes identificados na análise:
+Número 1: [métrica] — [valor calculado] — [o que significa]
+Número 2: [métrica] — [valor calculado] — [o que significa]
+Número 3: [métrica] — [valor calculado] — [o que significa]
+Número 4: [métrica] — [valor calculado] — [o que significa]
+Número 5: [métrica] — [valor calculado] — [o que significa]
 
-Semana 4 — [Tema da semana]:
-- Ação 1 com exemplo prático
-- Ação 2 com exemplo prático
-- Ação 3 com exemplo prático
-Resultado esperado ao final da semana:
+## 3. PLANO DE NOVOS PRODUTOS
+Esta seção deve ter pelo menos 3 páginas. Detalhe cada produto como se fosse um mini business plan.
 
-FASE 2 — ESTRUTURAR (Semanas 5 a 8)
+Com base no nicho (${r[COLS.regimes]}), serviços atuais (${r[COLS.servicosAlem]}), interesse declarado (${r[COLS.novoServico]}) e perfil da base de clientes, apresente 2 produtos ideais para lançar nos próximos 90 dias.
 
-Semana 5 — [Tema]:
-- 3 ações com exemplos práticos
-Resultado esperado:
+### PRODUTO 1 — [Nome do Produto]
+
+O que é este serviço:
+Escreva 2 parágrafos explicando o serviço, o que ele entrega ao cliente final e por que ele se encaixa perfeitamente no portfólio de ${r[COLS.escritorio]}.
+
+Por que faz sentido para este escritório agora:
+Justifique com dados das respostas. Conecte com as dores, metas e perfil da base de clientes. Mostre que não é uma aposta, é uma certeza baseada em dados.
+
+Quem na base de clientes vai querer:
+Descreva o perfil exato do cliente ideal para este serviço dentro da carteira atual. Dê exemplos de tipos de empresas (MEI, Simples Nacional, Lucro Presumido) que mais se beneficiam.
+
+Como estruturar e entregar:
+Passo 1 — [ação concreta]
+Passo 2 — [ação concreta]
+Passo 3 — [ação concreta]
+Passo 4 — [ação concreta]
+Passo 5 — [ação concreta]
+
+Precificação e modelo de cobrança:
+- Faixa de preço sugerida: R$ X a R$ Y por mês
+- Modelo: [recorrente / por projeto / por demanda]
+- Justificativa do preço: por que este valor faz sentido para o mercado e para o porte dos clientes de ${r[COLS.escritorio]}
+- Como apresentar para o cliente sem parecer "vendendo algo a mais"
+
+Projeção de receita:
+- Se 20% da base aderir: R$ X por mês
+- Se 30% da base aderir: R$ X por mês
+- Se 50% da base aderir: R$ X por mês
+- Prazo estimado para o produto se pagar (considerando tempo de implementação)
+
+Exemplo prático de abordagem:
+Escreva um script real de como o dono do escritório pode apresentar este serviço para um cliente durante uma reunião de rotina. Mínimo 5 linhas de diálogo.
+
+### PRODUTO 2 — [Nome do Produto]
+
+O que é este serviço:
+Escreva 2 parágrafos completos.
+
+Por que faz sentido para este escritório agora:
+Justificativa baseada nos dados das respostas.
+
+Quem na base de clientes vai querer:
+Perfil detalhado do cliente ideal.
+
+Como estruturar e entregar:
+Passo 1 ao Passo 5 com ações concretas.
+
+Precificação e modelo de cobrança:
+- Faixa de preço, modelo e justificativa
+- Como apresentar para o cliente
+
+Projeção de receita:
+- Cenários de 20%, 30% e 50% de adesão
+
+Exemplo prático de abordagem:
+Script real de apresentação ao cliente.
+
+## 4. PLANO DE AÇÃO — 90 DIAS
+Esta seção deve ter pelo menos 4 páginas. Cada semana com tema claro, 3 ações detalhadas com exemplos práticos reais e resultado esperado mensurável.
+
+### FASE 1 — ORGANIZAR (Semanas 1 a 4)
+Objetivo desta fase: arrumar a casa antes de crescer. Resolver os gargalos internos que impedem a expansão.
+
+Semana 1 — [Tema específico baseado na maior dor: ${r[COLS.dorGestao]}]:
+- Ação 1: [o que fazer] — Exemplo prático: [como fazer na prática, com detalhes reais]
+- Ação 2: [o que fazer] — Exemplo prático: [como fazer na prática]
+- Ação 3: [o que fazer] — Exemplo prático: [como fazer na prática]
+Resultado esperado ao final da semana: [meta concreta e mensurável]
+
+Semana 2 — [Tema específico]:
+- Ação 1 com exemplo prático detalhado
+- Ação 2 com exemplo prático detalhado
+- Ação 3 com exemplo prático detalhado
+Resultado esperado: [meta concreta]
+
+Semana 3 — [Tema específico]:
+- Ação 1 com exemplo prático detalhado
+- Ação 2 com exemplo prático detalhado
+- Ação 3 com exemplo prático detalhado
+Resultado esperado: [meta concreta]
+
+Semana 4 — [Tema específico]:
+- Ação 1 com exemplo prático detalhado
+- Ação 2 com exemplo prático detalhado
+- Ação 3 com exemplo prático detalhado
+Resultado esperado: [meta concreta]
+Resultado da Fase 1 completa: [onde o escritório deve estar ao final do mês 1]
+
+### FASE 2 — ESTRUTURAR (Semanas 5 a 8)
+Objetivo desta fase: criar a estrutura que vai sustentar o crescimento. Lançar os novos produtos e estruturar o comercial.
+
+Semana 5 — [Tema — início do lançamento do Produto 1]:
+- Ação 1 com exemplo prático detalhado
+- Ação 2 com exemplo prático detalhado
+- Ação 3 com exemplo prático detalhado
+Resultado esperado: [meta concreta]
 
 Semana 6 — [Tema]:
-- 3 ações com exemplos práticos
-Resultado esperado:
+- Ação 1 com exemplo prático detalhado
+- Ação 2 com exemplo prático detalhado
+- Ação 3 com exemplo prático detalhado
+Resultado esperado: [meta concreta]
 
-Semana 7 — [Tema]:
-- 3 ações com exemplos práticos
-Resultado esperado:
+Semana 7 — [Tema — início do lançamento do Produto 2]:
+- Ação 1 com exemplo prático detalhado
+- Ação 2 com exemplo prático detalhado
+- Ação 3 com exemplo prático detalhado
+Resultado esperado: [meta concreta]
 
 Semana 8 — [Tema]:
-- 3 ações com exemplos práticos
-Resultado esperado:
+- Ação 1 com exemplo prático detalhado
+- Ação 2 com exemplo prático detalhado
+- Ação 3 com exemplo prático detalhado
+Resultado esperado: [meta concreta]
+Resultado da Fase 2 completa: [onde o escritório deve estar ao final do mês 2]
 
-FASE 3 — CRESCER (Semanas 9 a 12)
+### FASE 3 — CRESCER (Semanas 9 a 12)
+Objetivo desta fase: acelerar, consolidar receita e preparar o próximo ciclo de crescimento.
 
 Semana 9 — [Tema]:
-- 3 ações com exemplos práticos
-Resultado esperado:
+- Ação 1 com exemplo prático detalhado
+- Ação 2 com exemplo prático detalhado
+- Ação 3 com exemplo prático detalhado
+Resultado esperado: [meta concreta]
 
 Semana 10 — [Tema]:
-- 3 ações com exemplos práticos
-Resultado esperado:
+- Ação 1 com exemplo prático detalhado
+- Ação 2 com exemplo prático detalhado
+- Ação 3 com exemplo prático detalhado
+Resultado esperado: [meta concreta]
 
 Semana 11 — [Tema]:
-- 3 ações com exemplos práticos
-Resultado esperado:
+- Ação 1 com exemplo prático detalhado
+- Ação 2 com exemplo prático detalhado
+- Ação 3 com exemplo prático detalhado
+Resultado esperado: [meta concreta]
 
-Semana 12 — Consolidação e próximos passos:
-- 3 ações finais
-- Onde o escritório deve estar ao final dos 90 dias: metas concretas de faturamento, novos produtos ativos, indicadores
-Resultado esperado:
+Semana 12 — Consolidação e Visão do Próximo Ciclo:
+- Ação 1: revisão completa dos 90 dias — o que funcionou, o que ajustar
+- Ação 2: definição das metas para os próximos 90 dias
+- Ação 3: planejamento do próximo produto ou expansão de serviço
+Resultado final dos 90 dias: descreva em detalhes onde ${r[COLS.escritorio]} deve estar — faturamento esperado, produtos ativos, estrutura comercial, novos clientes, indicadores funcionando.
 
-REGRAS CRÍTICAS:
-1. NUNCA escreva "INSTRUÇÃO:", "Defina aqui", "Preencha", "[coloque aqui]" ou qualquer meta-instrução. Tudo deve estar escrito e completo.
-2. Cite o nome "${r[COLS.escritorio]}" e dados reais das respostas ao longo de todo o documento.
-3. Exemplos práticos devem ser reais e aplicáveis para o segmento contábil — não genéricos.
-4. Tom: direto, empático, motivador. Fale como mentor que conhece o negócio.
-5. Formatação: use # para títulos, - para bullets. Sem tabelas markdown. Sem caracteres especiais.
-6. Cada seção deve ter conteúdo COMPLETO — nunca um título sem corpo.`;
+REGRAS ABSOLUTAS:
+1. Escreva no mínimo 15 páginas A4 de conteúdo. Seja extenso, rico e detalhado.
+2. NUNCA escreva meta-instruções como "INSTRUÇÃO:", "[coloque aqui]", "Defina", "Preencha". Tudo já escrito e completo.
+3. Cite "${r[COLS.escritorio]}" pelo nome em pelo menos 3 vezes por seção.
+4. Todos os números devem ser calculados e reais — não estimativas vagas.
+5. Exemplos práticos devem ser específicos para contabilidade — não genéricos de negócios.
+6. Tom: Fernando Muterle falando diretamente com o dono do escritório. Direto, empático, sem enrolação.
+7. Formatação: use # para títulos principais, ## para subtítulos, - para bullets. Sem tabelas markdown.
+8. Cada seção deve ter no mínimo 3 parágrafos ou 6 bullets detalhados.`;
 }
 
 
