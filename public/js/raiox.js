@@ -513,6 +513,220 @@ function rxNovo() {
   }
 }
 
+
+// ── DESENHA GRÁFICO DE PIZZA NO PDF ──────────────────────────────
+function desenharPizza(doc, cx, cy, raio, fatias, titulo, W) {
+  // fatias = [{label, valor, cor}]
+  const total = fatias.reduce((s, f) => s + f.valor, 0);
+  let angulo = -Math.PI / 2; // começa no topo
+
+  fatias.forEach(fatia => {
+    const slice = (fatia.valor / total) * 2 * Math.PI;
+    const endAng = angulo + slice;
+    const midAng = angulo + slice / 2;
+
+    // Desenha fatia usando aproximação por linhas
+    doc.setFillColor(...fatia.cor);
+    const steps = Math.max(8, Math.round(slice * 20));
+    const pts = [[cx, cy]];
+    for (let i = 0; i <= steps; i++) {
+      const a = angulo + (slice * i / steps);
+      pts.push([cx + Math.cos(a) * raio, cy + Math.sin(a) * raio]);
+    }
+    // Desenha polígono aproximado
+    doc.setLineWidth(0);
+    // Usa múltiplos triângulos
+    for (let i = 1; i < pts.length - 1; i++) {
+      doc.triangle(pts[0][0], pts[0][1], pts[i][0], pts[i][1], pts[i+1][0], pts[i+1][1], 'F');
+    }
+    angulo = endAng;
+  });
+
+  // Círculo branco central (donut)
+  doc.setFillColor(255, 255, 255);
+  doc.circle(cx, cy, raio * 0.45, 'F');
+
+  // Título no centro
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(7);
+  doc.setTextColor(102, 16, 129);
+  const tLines = doc.splitTextToSize(titulo, raio * 0.8);
+  tLines.slice(0, 2).forEach((line, i) => {
+    doc.text(line, cx, cy - 2 + i * 5, { align: 'center' });
+  });
+}
+
+// ── DESENHA LEGENDA DA PIZZA ──────────────────────────────────────
+function desenharLegenda(doc, x, y, fatias, total) {
+  doc.setFontSize(8);
+  fatias.forEach((fatia, i) => {
+    const ly = y + i * 10;
+    doc.setFillColor(...fatia.cor);
+    doc.roundedRect(x, ly - 3, 6, 5, 1, 1, 'F');
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(30, 30, 30);
+    const pct = Math.round(fatia.valor / total * 100);
+    doc.text(fatia.label + ' ' + pct + '%', x + 9, ly + 1);
+  });
+}
+
+// ── PÁGINA DE GRÁFICOS VISUAIS ────────────────────────────────────
+function desenharPaginaGraficos(doc, W, H, ML, MR, TW, r, COR, sf) {
+  doc.addPage();
+  doc.setFillColor(255, 255, 255);
+  doc.rect(0, 0, W, H, 'F');
+
+  // Header
+  doc.setFillColor(...COR.roxo); doc.rect(0, 0, W, 13, 'F');
+  doc.setFillColor(...COR.laranja); doc.rect(0, 0, 6, 13, 'F');
+  sf(doc, 'bold', 9, COR.branco);
+  doc.text('PAINEL VISUAL — DIAGNÓSTICO', ML, 9);
+
+  // Título da página
+  sf(doc, 'bold', 14, COR.roxo);
+  doc.text('Diagnóstico Visual do Escritório', ML, 26);
+  sf(doc, 'normal', 9, [90, 90, 90]);
+  doc.text('Análise baseada nas respostas do Check-up Contábil 2026', ML, 33);
+
+  // ── GRÁFICO 1: MATURIDADE OPERACIONAL ───────────────────
+  const orgNota = parseFloat(r[8]) || 5;
+  const fat1 = [
+    { label: 'Maturidade', valor: orgNota,      cor: [102, 16, 129] },
+    { label: 'A evoluir',  valor: 10 - orgNota, cor: [237, 220, 245] },
+  ];
+  sf(doc, 'bold', 10, COR.roxo);
+  doc.text('Maturidade Operacional', ML, 46);
+  desenharPizza(doc, ML + 28, 78, 22, fat1, orgNota + '/10', W);
+  desenharLegenda(doc, ML + 54, 66, fat1, 10);
+
+  // ── GRÁFICO 2: DISPOSIÇÃO PARA MUDANÇA ──────────────────
+  const dispNota = parseFloat(r[27]) || 7;
+  const fat2 = [
+    { label: 'Disposição',  valor: dispNota,       cor: [241, 152, 0] },
+    { label: 'Resistência', valor: 10 - dispNota,  cor: [255, 235, 190] },
+  ];
+  sf(doc, 'bold', 10, COR.roxo);
+  doc.text('Disposição para Mudança', ML + 90, 46);
+  desenharPizza(doc, ML + 118, 78, 22, fat2, dispNota + '/10', W);
+  desenharLegenda(doc, ML + 144, 66, fat2, 10);
+
+  // ── BARRA: SERVIÇOS OFERECIDOS ───────────────────────────
+  const servicos = String(r[17] || '').toLowerCase();
+  const listaServicos = [
+    { nome: 'BPO Financeiro',       ativo: servicos.includes('bpo') },
+    { nome: 'Consultoria Gerencial', ativo: servicos.includes('gerencial') || servicos.includes('consultoria') },
+    { nome: 'Planej. Tributário',    ativo: servicos.includes('tribut') || servicos.includes('planej') },
+    { nome: 'Treinamento de Equipe', ativo: servicos.includes('treinamento') },
+    { nome: 'Relatórios Gerenciais', ativo: servicos.includes('relatório') || servicos.includes('relatorio') },
+  ];
+
+  sf(doc, 'bold', 10, COR.roxo);
+  doc.text('Portfólio de Serviços Atual', ML, 115);
+  sf(doc, 'normal', 8, [90, 90, 90]);
+  doc.text('Serviços oferecidos além da contabilidade básica', ML, 121);
+
+  listaServicos.forEach((s, i) => {
+    const sy = 128 + i * 11;
+    // Barra de fundo
+    doc.setFillColor(237, 220, 245);
+    doc.roundedRect(ML, sy, TW, 7, 2, 2, 'F');
+    // Barra preenchida
+    if (s.ativo) {
+      doc.setFillColor(...COR.roxo);
+      doc.roundedRect(ML, sy, TW * 0.85, 7, 2, 2, 'F');
+    } else {
+      doc.setFillColor(220, 200, 235);
+      doc.roundedRect(ML, sy, TW * 0.18, 7, 2, 2, 'F');
+    }
+    // Label
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(7.5);
+    doc.setTextColor(255, 255, 255);
+    doc.text(s.nome, ML + 4, sy + 5);
+    // Status
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7);
+    doc.setTextColor(s.ativo ? 255 : 102, s.ativo ? 255 : 16, s.ativo ? 255 : 129);
+    doc.text(s.ativo ? 'ATIVO' : 'NÃO OFERECE', W - MR, sy + 5, { align: 'right' });
+  });
+
+  // ── RADAR SIMPLIFICADO: 6 ÁREAS ─────────────────────────
+  sf(doc, 'bold', 10, COR.roxo);
+  doc.text('Radar de Maturidade por Área', ML, 196);
+
+  const areas = [
+    { nome: 'Gestão',        nota: calcNotaArea(r, [7,8,9,10,11]) },
+    { nome: 'Comercial',     nota: calcNotaArea(r, [12,13,14,15,16]) },
+    { nome: 'Produtos',      nota: calcNotaArea(r, [17,18,19,20]) },
+    { nome: 'Tributário',    nota: calcNotaArea(r, [20,21,22]) },
+    { nome: 'Posicionamento',nota: calcNotaArea(r, [23,24,25]) },
+    { nome: 'Prontidão',     nota: parseFloat(r[27]) || 7 },
+  ];
+
+  const barY = 202;
+  const barW = (TW - 10) / areas.length;
+  const maxH = 35;
+
+  areas.forEach((area, i) => {
+    const bx = ML + i * barW + 2;
+    const bh = (area.nota / 10) * maxH;
+    const by = barY + maxH - bh;
+    const cor = area.nota >= 7 ? COR.roxo : area.nota >= 5 ? COR.laranja : [220, 60, 60];
+
+    // Barra de fundo
+    doc.setFillColor(237, 220, 245);
+    doc.roundedRect(bx, barY, barW - 4, maxH, 2, 2, 'F');
+    // Barra de valor
+    doc.setFillColor(...cor);
+    doc.roundedRect(bx, by, barW - 4, bh, 2, 2, 'F');
+    // Nota
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8);
+    doc.setTextColor(...cor);
+    doc.text(area.nota.toFixed(1), bx + (barW - 4) / 2, by - 2, { align: 'center' });
+    // Label
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(6.5);
+    doc.setTextColor(60, 60, 60);
+    const lLines = doc.splitTextToSize(area.nome, barW - 2);
+    lLines.forEach((ll, li) => {
+      doc.text(ll, bx + (barW - 4) / 2, barY + maxH + 5 + li * 5, { align: 'center' });
+    });
+  });
+
+  // Legenda do radar
+  sf(doc, 'normal', 7.5, [90, 90, 90]);
+  doc.text('Verde = 7+   Laranja = 5-6   Vermelho = abaixo de 5', ML, barY + maxH + 18);
+}
+
+// ── CALCULA NOTA DE ÁREA ──────────────────────────────────────────
+function calcNotaArea(r, cols) {
+  const respostas = {
+    'Sim': 8, 'Sim, bem estruturados': 9, 'Sim, com certeza': 9,
+    'Parcialmente': 6, 'Em construção': 5,
+    'Não': 3, 'Não, quase nada documentado': 2, 'Não acompanho': 2,
+    'Não, eu mesmo faço tudo': 3, 'Não, as vendas acontecem sozinhas': 2,
+    'Tenho alguns números soltos': 4, 'Tenho uma ideia aproximada': 5,
+    'Toda semana': 9, '1x por mês': 6, 'Eventualmente': 4, 'Quase nunca': 2,
+    'Empresa que resolve minhas obrigações': 4,
+    'Parceiro que ajuda em algumas decisões': 6,
+    'Consultoria estratégica de negócios': 9,
+    'Sim, mas sem padrão': 5, 'Não produzo': 2,
+    'Sim, com planejamento claro': 9, 'Algo pontual (um email/post)': 4,
+    'Já estou aprofundado e aplicando estudos na base': 9,
+    'Sei o básico, mas não estou aplicando': 4,
+    'Não sei dizer': 2,
+  };
+  let soma = 0, count = 0;
+  cols.forEach(ci => {
+    const val = String(r[ci] || '').trim();
+    const n = parseFloat(val);
+    if (!isNaN(n) && n >= 0 && n <= 10) { soma += n; count++; }
+    else if (respostas[val] !== undefined) { soma += respostas[val]; count++; }
+  });
+  return count > 0 ? Math.min(10, soma / count) : 5;
+}
+
 // ── GERAR PDF DO RAIO-X ───────────────────────────────────────────
 async function rxGerarPDF() {
   if (!rxConteudo || !rxSelecionada) { alert('Gere o Raio-X primeiro.'); return; }
@@ -612,6 +826,10 @@ async function rxGerarPDF() {
       W-MR, H-9, {align:'right'}
     );
 
+    // ── PÁGINA DE GRÁFICOS VISUAIS ──────────────────────────────────
+    await prog(35, 'Gerando paineis visuais...', 300);
+    desenharPaginaGraficos(doc, W, H, ML, MR, TW, rxSelecionada.respostas, COR, sf);
+
     // ── CONTEÚDO ──────────────────────────────────────────────────
     await prog(45, 'Formatando diagnostico...', 400);
 
@@ -639,7 +857,7 @@ async function rxGerarPDF() {
     doc.setFillColor(255,255,255);
     doc.rect(0,0,W,H,'F');
 
-    let py=MT, pageNum=2, primera=true;
+    let py=MT, pageNum=3, primera=true;
 
     const addHdr = () => {
       doc.setFillColor(...COR.roxo); doc.rect(0,0,W,13,'F');

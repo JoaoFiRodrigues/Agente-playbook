@@ -25,7 +25,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 4000,
+        max_tokens: 8000,
         system: `Você é especialista em copywriting estratégico e criação de playbooks para escritórios de contabilidade no Brasil.
 MISSÃO: Transformar e Potencializar Contabilidades — ajudar escritórios a evoluir de "fábrica de obrigações" para assessorias estratégicas.
 Escreva em português brasileiro. Tom: profissional, empático e motivador.
