@@ -5,15 +5,18 @@ let currentStep = 1;
 let lastGeneratedContent = '';
 let lastDados = null;
 
+ 
 // ── NAVEGAÇÃO PRINCIPAL ───────────────────────────────────────────
 function showView(name) {
-  ['criar', 'dash', 'hist'].forEach(v => {
+  ['criar', 'dash', 'hist', 'raiox'].forEach(v => {
     document.getElementById('view-' + v).classList.toggle('active', v === name);
     document.getElementById('nav-' + v).classList.toggle('active', v === name);
   });
-  if (name === 'dash') renderDashboard();
-  if (name === 'hist') renderHistorico();
+  if (name === 'dash')  renderDashboard();
+  if (name === 'hist')  renderHistorico();
+  if (name === 'raiox') initRaioX();
 }
+ 
 
 // ── STEPPER ───────────────────────────────────────────────────────
 function goStep(n) {

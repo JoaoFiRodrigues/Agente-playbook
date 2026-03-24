@@ -7,6 +7,8 @@
   <link rel="stylesheet" href="/css/style.css">
   <!-- jsPDF para geração de PDF no browser -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <link rel="stylesheet" href="/css/raiox.css">
 </head>
 <body>
 
@@ -24,6 +26,7 @@
   <!-- NAV PRINCIPAL -->
   <div class="nav">
     <button class="nav-btn active" onclick="showView('criar')" id="nav-criar">✏️ Criar Playbook</button>
+    <button class="nav-btn raiox" onclick="showView('raiox')" id="nav-raiox">🔬 Raio-X</button>
     <button class="nav-btn" onclick="showView('dash')" id="nav-dash">📊 Dashboard</button>
     <button class="nav-btn" onclick="showView('hist')" id="nav-hist">📁 Histórico</button>
   </div>
@@ -382,6 +385,74 @@
     </div>
   </div>
 
+  <!-- ========== VIEW: RAIO-X ========== -->
+<div class="view" id="view-raiox">
+  <!-- Intro -->
+  <div class="rx-intro">
+    <div class="rx-intro-icon">🔬</div>
+    <div>
+      <h2>Raio-X Contábil 2026</h2>
+      <p>Importe o Excel do Google Forms e gere um diagnóstico completo com notas por área, pontos críticos e plano de ação personalizado.</p>
+    </div>
+  </div>
+  <!-- Seleção -->
+  <div id="rx-selecao">
+    <div class="card">
+      <div class="card-title">Importar Respostas do Check-up</div>
+      <div class="card-sub">Exporte o arquivo do Google Forms (Respostas → Excel) e arraste aqui.
+    </div>
+    <div class="rx-upload-area" id="rx-drop-area">
+    <input type="file" accept=".xlsx,.xls,.csv" onchange="rxLerExcel(this.files[0])" id="rx-file-input">
+    <div class="rx-upload-icon">📊</div>
+    <div class="rx-upload-title">Arraste o arquivo Excel ou clique para selecionar</div>
+    <div class="rx-upload-sub">Suporta .xlsx exportado do Google Forms</div>
+    <div id="rx-upload-msg"></div>
+  </div>
+
+  <!-- Lista de empresas -->
+  <div id="rx-lista-wrap">
+    <div class="rx-lista-titulo" style="margin-top:1rem">Selecione a empresa</div>
+    <div class="rx-empresa-grid" id="rx-empresa-lista"></div>
+
+    <!-- Confirmar geração -->
+    <div id="rx-confirmar" style="display:none;margin-top:.8rem;background:#f5eefa;border:0.5px solid #c084e8;border-radius:10px;padding:1rem 1.2rem;display:none;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
+      <div class="rx-confirmar-info">
+        <strong id="rx-confirmar-nome">—</strong>
+        <span id="rx-confirmar-cidade">—</span>
+      </div>
+      <button class="btn" style="background:#661081;color:#fff;border-color:#661081;font-size:14px;padding:10px 24px" onclick="rxGerar()">
+        🔬 Gerar Raio-X
+      </button>
+    </div>
+  </div>
+</div>
+</div>
+  <!-- Resultado -->
+  <div id="rx-resultado" style="display:none">
+    <div class="card">
+      <div class="card-title" id="rx-res-titulo">Gerando Raio-X...</div>
+      <div class="card-sub"  id="rx-res-sub"></div>
+<!-- Loading -->
+  <div id="rx-loading" style="display:none">
+    <div class="rx-loading-icon">🔬</div>
+    <div class="loading-msg" id="rx-msg">Analisando respostas...</div>
+    <div class="rx-bar-wrap"><div id="rx-bar"></div></div>
+  </div>
+
+  <!-- Output -->
+  <div id="rx-output" style="display:none"></div>
+
+  <!-- Ações -->
+  <div id="rx-actions" style="display:none">
+    <div class="btn-row" style="flex-wrap:wrap;margin-top:1rem">
+      <button class="btn btn-secondary" onclick="rxNovo()">← Nova análise</button>
+      <button class="btn btn-primary"   onclick="rxGerarPDF()">⬇️ Baixar PDF</button>
+      <button class="btn btn-secondary" onclick="showView('hist')">📁 Ver Histórico</button>
+    </div>
+  </div>
+</div>
+</div>
+</div><!-- /view-raiox -->
 </div><!-- /app -->
 
 <!-- PDF MODAL -->
@@ -404,6 +475,6 @@
 <script src="/js/storage.js"></script>
 <script src="/js/pdf.js"></script>
 <script src="/js/app.js"></script>
-
+<script src="/js/raiox.js"></script>
 </body>
 </html>
