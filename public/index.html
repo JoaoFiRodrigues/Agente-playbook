@@ -384,9 +384,11 @@
       </div>
     </div>
   </div>
+</div><!-- /app -->
 
-  <!-- ========== VIEW: RAIO-X ========== -->
+<!-- ========== VIEW: RAIO-X ========== -->
 <div class="view" id="view-raiox">
+
   <!-- Intro -->
   <div class="rx-intro">
     <div class="rx-intro-icon">🔬</div>
@@ -395,65 +397,68 @@
       <p>Importe o Excel do Google Forms e gere um diagnóstico completo com notas por área, pontos críticos e plano de ação personalizado.</p>
     </div>
   </div>
+
   <!-- Seleção -->
   <div id="rx-selecao">
     <div class="card">
       <div class="card-title">Importar Respostas do Check-up</div>
-      <div class="card-sub">Exporte o arquivo do Google Forms (Respostas → Excel) e arraste aqui.
-    </div>
-    <div class="rx-upload-area" id="rx-drop-area">
-    <input type="file" accept=".xlsx,.xls,.csv" onchange="rxLerExcel(this.files[0])" id="rx-file-input">
-    <div class="rx-upload-icon">📊</div>
-    <div class="rx-upload-title">Arraste o arquivo Excel ou clique para selecionar</div>
-    <div class="rx-upload-sub">Suporta .xlsx exportado do Google Forms</div>
-    <div id="rx-upload-msg"></div>
-  </div>
+      <div class="card-sub">Exporte o arquivo do Google Forms (Respostas → Excel) e arraste aqui.</div>
 
-  <!-- Lista de empresas -->
-  <div id="rx-lista-wrap">
-    <div class="rx-lista-titulo" style="margin-top:1rem">Selecione a empresa</div>
-    <div class="rx-empresa-grid" id="rx-empresa-lista"></div>
-
-    <!-- Confirmar geração -->
-    <div id="rx-confirmar" style="display:none;margin-top:.8rem;background:#f5eefa;border:0.5px solid #c084e8;border-radius:10px;padding:1rem 1.2rem;display:none;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
-      <div class="rx-confirmar-info">
-        <strong id="rx-confirmar-nome">—</strong>
-        <span id="rx-confirmar-cidade">—</span>
+      <div class="rx-upload-area" id="rx-drop-area">
+        <input type="file" accept=".xlsx,.xls,.csv" onchange="rxLerExcel(this.files[0])" id="rx-file-input">
+        <div class="rx-upload-icon">📊</div>
+        <div class="rx-upload-title">Arraste o arquivo Excel ou clique para selecionar</div>
+        <div class="rx-upload-sub">Suporta .xlsx exportado do Google Forms</div>
+        <div id="rx-upload-msg"></div>
       </div>
-      <button class="btn" style="background:#661081;color:#fff;border-color:#661081;font-size:14px;padding:10px 24px" onclick="rxGerar()">
-        🔬 Gerar Raio-X
-      </button>
+
+      <!-- Lista de empresas -->
+      <div id="rx-lista-wrap">
+        <div class="rx-lista-titulo" style="margin-top:1rem">Selecione a empresa</div>
+        <div class="rx-empresa-grid" id="rx-empresa-lista"></div>
+
+        <!-- Confirmar geração -->
+        <div id="rx-confirmar" style="display:none;margin-top:.8rem;background:#f5eefa;border:0.5px solid #c084e8;border-radius:10px;padding:1rem 1.2rem;display:none;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
+          <div class="rx-confirmar-info">
+            <strong id="rx-confirmar-nome">—</strong>
+            <span id="rx-confirmar-cidade">—</span>
+          </div>
+          <button class="btn" style="background:#661081;color:#fff;border-color:#661081;font-size:14px;padding:10px 24px" onclick="rxGerar()">
+            🔬 Gerar Raio-X
+          </button>
+        </div>
+      </div>
     </div>
   </div>
-</div>
-</div>
+
   <!-- Resultado -->
   <div id="rx-resultado" style="display:none">
     <div class="card">
       <div class="card-title" id="rx-res-titulo">Gerando Raio-X...</div>
       <div class="card-sub"  id="rx-res-sub"></div>
-<!-- Loading -->
-  <div id="rx-loading" style="display:none">
-    <div class="rx-loading-icon">🔬</div>
-    <div class="loading-msg" id="rx-msg">Analisando respostas...</div>
-    <div class="rx-bar-wrap"><div id="rx-bar"></div></div>
-  </div>
 
-  <!-- Output -->
-  <div id="rx-output" style="display:none"></div>
+      <!-- Loading -->
+      <div id="rx-loading" style="display:none">
+        <div class="rx-loading-icon">🔬</div>
+        <div class="loading-msg" id="rx-msg">Analisando respostas...</div>
+        <div class="rx-bar-wrap"><div id="rx-bar"></div></div>
+      </div>
 
-  <!-- Ações -->
-  <div id="rx-actions" style="display:none">
-    <div class="btn-row" style="flex-wrap:wrap;margin-top:1rem">
-      <button class="btn btn-secondary" onclick="rxNovo()">← Nova análise</button>
-      <button class="btn btn-primary"   onclick="rxGerarPDF()">⬇️ Baixar PDF</button>
-      <button class="btn btn-secondary" onclick="showView('hist')">📁 Ver Histórico</button>
+      <!-- Output -->
+      <div id="rx-output" style="display:none"></div>
+
+      <!-- Ações -->
+      <div id="rx-actions" style="display:none">
+        <div class="btn-row" style="flex-wrap:wrap;margin-top:1rem">
+          <button class="btn btn-secondary" onclick="rxNovo()">← Nova análise</button>
+          <button class="btn btn-primary"   onclick="rxGerarPDF()">⬇️ Baixar PDF</button>
+          <button class="btn btn-secondary" onclick="showView('hist')">📁 Ver Histórico</button>
+        </div>
+      </div>
     </div>
   </div>
-</div>
-</div>
+
 </div><!-- /view-raiox -->
-</div><!-- /app -->
 
 <!-- PDF MODAL -->
 <div class="modal-overlay" id="pdf-modal" style="display:none">
