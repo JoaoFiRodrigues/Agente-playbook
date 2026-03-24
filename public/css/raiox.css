@@ -5,8 +5,7 @@
 
 /* NAV — botão Raio-X */
 .nav-btn.raiox {
-  background: linear-gradient(135deg, #661081, #f19800);
-  color: #fff;
+  color: black;
   font-weight: 600;
 }
 .nav-btn.raiox:hover { opacity: .9; }
@@ -17,7 +16,7 @@
   border-radius: 12px;
   padding: 1.2rem 1.5rem;
   color: #fff;
-  margin-bottom: 1rem;
+  margin: 0 5rem;
   display: flex;
   align-items: center;
   gap: 1rem;
