@@ -233,7 +233,7 @@ function rxBuildPrompt(emp) {
   const hoje = new Date().toLocaleDateString('pt-BR', { day:'2-digit', month:'long', year:'numeric' });
 
   return `Você é o Fernando Muterle, especialista em transformação de escritórios contábeis no Brasil.
-Analise as respostas do Check-up Contábil 2026 abaixo e gere um RAIO-X DIAGNÓSTICO COMPLETO.
+Com base nas respostas do Check-up Contábil 2026 abaixo, crie um PLAYBOOK PERSONALIZADO completo e profissional.
 
 EMPRESA: ${r[COLS.escritorio]}
 CIDADE: ${r[COLS.cidade]}
@@ -274,65 +274,132 @@ REFORMA TRIBUTÁRIA:
 POSICIONAMENTO E MARCA:
 - Como clientes enxergam o escritório: ${r[COLS.percepcaoCliente]}
 - Produz conteúdo: ${r[COLS.conteudo]}
-- Diferencial percebido pelos clientes: ${r[COLS.diferencial]}
+- Diferencial percebido: ${r[COLS.diferencial]}
 
 VISÃO E PRONTIDÃO:
 - Visão para dezembro 2026: ${r[COLS.visao2026]}
 - Disposição para mudar (0-10): ${r[COLS.disposicao]}
 - Informação extra: ${r[COLS.infoExtra]}
 
-=== ESTRUTURA DO RAIO-X ===
+=== ESTRUTURA DO PLAYBOOK ===
 
-Gere o diagnóstico completo com EXATAMENTE estas seções:
+Gere o playbook com EXATAMENTE estas seções na ordem abaixo:
 
-# RAIO-X CONTÁBIL — ${r[COLS.escritorio]}
+# PLAYBOOK ESTRATÉGICO — ${r[COLS.escritorio]}
 
-## 1. PAINEL DE NOTAS POR ÁREA
-Atribua uma nota de 0 a 10 para cada área com base nas respostas. Justifique em 1 linha cada nota.
-- Gestão e Processos: X/10
-- Comercial e Crescimento: X/10
-- Produtos e Serviços: X/10
-- Reforma Tributária: X/10
-- Posicionamento e Marca: X/10
-- Prontidão para Mudança: X/10
-- MÉDIA GERAL: X/10
+## INTRODUÇÃO
+Escreva uma introdução calorosa e personalizada de 3 parágrafos dirigida ao dono do escritório.
+Parágrafo 1: Contextualize o momento atual do mercado contábil brasileiro e por que 2026 é decisivo.
+Parágrafo 2: Fale sobre o que você enxergou nas respostas de ${r[COLS.escritorio]} — cite dados reais que ele informou (faturamento, tempo de existência, equipe, regimes, serviços atuais).
+Parágrafo 3: Explique o que este playbook vai entregar e como usar na prática.
 
-## 2. PONTOS CRÍTICOS E URGENTES
-Liste os 3 maiores riscos identificados nas respostas. Seja específico e direto. Cite dados das respostas.
+## ANÁLISE DE DADOS DO ESCRITÓRIO
+Faça uma análise profunda e honesta com base nos números e dados reais informados.
 
-## 3. PONTOS FORTES A POTENCIALIZAR
-Liste 3 pontos positivos reais identificados. Mostre como alavancar cada um.
+- Faturamento atual (${r[COLS.faturamento]}) e o que isso representa no mercado contábil
+- Ticket médio estimado: com ${r[COLS.colaboradores]} colaboradores e faturamento de ${r[COLS.faturamento]}, calcule o ticket médio por cliente e compare com o benchmark do setor (ticket médio nacional gira em torno de R$ 600 a R$ 1.200/cliente/mês)
+- Capacidade produtiva: análise da relação colaboradores x clientes x faturamento
+- Gargalos financeiros identificados: cite as respostas sobre processos (${r[COLS.processos]}), indicadores (${r[COLS.indicadores]}) e ticket médio (${r[COLS.ticketMedio]})
+- Oportunidade de receita não capturada: quanto este escritório está deixando na mesa com base no perfil atual
+- Avaliação da organização interna: nota ${r[COLS.orgNota]}/10 — o que isso impacta no faturamento
+- Resumo: 3 números que definem o momento atual do escritório
 
-## 4. COMPARATIVO COM O MERCADO CONTÁBIL
-Compare a situação desta empresa com os benchmarks do mercado contábil brasileiro. Use dados reais: ticket médio do setor, % de escritórios digitalizados, etc.
+## PLANO DE NOVOS PRODUTOS
+Com base no nicho, regimes atendidos (${r[COLS.regimes]}), serviços atuais (${r[COLS.servicosAlem]}) e o serviço que quer lançar (${r[COLS.novoServico]}), apresente 2 produtos novos altamente adequados para este escritório.
 
-## 5. PLANO DE AÇÃO PERSONALIZADO — 90 DIAS
-Divida em 3 fases de 30 dias. Cada fase com 3-4 ações concretas e específicas baseadas nas respostas.
+Para cada produto siga EXATAMENTE esta estrutura:
 
-Fase 1 — Primeiros 30 dias (Organizar):
-Fase 2 — Dias 31 a 60 (Estruturar):
-Fase 3 — Dias 61 a 90 (Crescer):
+PRODUTO 1 — [Nome do Produto]
+- O que é: descrição em 2 linhas do que é o serviço
+- Por que faz sentido para ${r[COLS.escritorio]}: justificativa baseada nas respostas reais
+- Público-alvo dentro da base de clientes: qual perfil de cliente da carteira se beneficia mais
+- Como entregar: passo a passo simplificado de como operacionalizar
+- Precificação sugerida: faixa de preço com base no mercado e no porte do escritório
+- Potencial de receita adicional: estimativa mensal se 30% da base aderir
 
-## 6. CALCULADORA DE PRECIFICAÇÃO
-Com base no faturamento (${r[COLS.faturamento]}) e número de colaboradores (${r[COLS.colaboradores]}), calcule:
-- Ticket médio atual estimado
-- Ticket médio ideal para o porte
-- Potencial de crescimento de receita com repricing
-- 3 serviços premium sugeridos com faixas de preço
+PRODUTO 2 — [Nome do Produto]
+- O que é: descrição em 2 linhas
+- Por que faz sentido para ${r[COLS.escritorio]}: justificativa baseada nas respostas reais
+- Público-alvo dentro da base de clientes
+- Como entregar: passo a passo simplificado
+- Precificação sugerida
+- Potencial de receita adicional
 
-## 7. EXERCÍCIO PRÁTICO
-Crie 1 exercício concreto e específico para esta empresa realizar na próxima semana. Inclua passo a passo e resultado esperado.
+## PLANO DE AÇÃO — 90 DIAS
+Plano semanal detalhado e prático. Para cada semana, escreva ações reais e específicas — não genéricas.
 
-## 8. MENSAGEM DO FERNANDO
-Escreva uma mensagem direta, empática e motivadora de Fernando Muterle para o dono deste escritório, baseada nas respostas dele. Máximo 5 linhas.
+FASE 1 — ORGANIZAR (Semanas 1 a 4)
 
-REGRAS:
-- Use dados reais das respostas em todo o diagnóstico
-- Seja específico — cite o nome da empresa, cidade, situações reais respondidas
-- Tom: direto, empático, motivador, sem rodeios
-- Nenhuma seção pode ficar vazia ou genérica
-- Use # para títulos e - para bullets. Sem tabelas markdown.`;
+Semana 1 — [Tema da semana]:
+- Ação 1 com exemplo prático de como fazer
+- Ação 2 com exemplo prático
+- Ação 3 com exemplo prático
+Resultado esperado ao final da semana:
+
+Semana 2 — [Tema da semana]:
+- Ação 1 com exemplo prático
+- Ação 2 com exemplo prático
+- Ação 3 com exemplo prático
+Resultado esperado ao final da semana:
+
+Semana 3 — [Tema da semana]:
+- Ação 1 com exemplo prático
+- Ação 2 com exemplo prático
+- Ação 3 com exemplo prático
+Resultado esperado ao final da semana:
+
+Semana 4 — [Tema da semana]:
+- Ação 1 com exemplo prático
+- Ação 2 com exemplo prático
+- Ação 3 com exemplo prático
+Resultado esperado ao final da semana:
+
+FASE 2 — ESTRUTURAR (Semanas 5 a 8)
+
+Semana 5 — [Tema]:
+- 3 ações com exemplos práticos
+Resultado esperado:
+
+Semana 6 — [Tema]:
+- 3 ações com exemplos práticos
+Resultado esperado:
+
+Semana 7 — [Tema]:
+- 3 ações com exemplos práticos
+Resultado esperado:
+
+Semana 8 — [Tema]:
+- 3 ações com exemplos práticos
+Resultado esperado:
+
+FASE 3 — CRESCER (Semanas 9 a 12)
+
+Semana 9 — [Tema]:
+- 3 ações com exemplos práticos
+Resultado esperado:
+
+Semana 10 — [Tema]:
+- 3 ações com exemplos práticos
+Resultado esperado:
+
+Semana 11 — [Tema]:
+- 3 ações com exemplos práticos
+Resultado esperado:
+
+Semana 12 — Consolidação e próximos passos:
+- 3 ações finais
+- Onde o escritório deve estar ao final dos 90 dias: metas concretas de faturamento, novos produtos ativos, indicadores
+Resultado esperado:
+
+REGRAS CRÍTICAS:
+1. NUNCA escreva "INSTRUÇÃO:", "Defina aqui", "Preencha", "[coloque aqui]" ou qualquer meta-instrução. Tudo deve estar escrito e completo.
+2. Cite o nome "${r[COLS.escritorio]}" e dados reais das respostas ao longo de todo o documento.
+3. Exemplos práticos devem ser reais e aplicáveis para o segmento contábil — não genéricos.
+4. Tom: direto, empático, motivador. Fale como mentor que conhece o negócio.
+5. Formatação: use # para títulos, - para bullets. Sem tabelas markdown. Sem caracteres especiais.
+6. Cada seção deve ter conteúdo COMPLETO — nunca um título sem corpo.`;
 }
+
 
 // ── NOVO RAIO-X ───────────────────────────────────────────────────
 function rxNovo() {
