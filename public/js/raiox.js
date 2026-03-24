@@ -118,7 +118,7 @@ function rxRenderizarLista() {
     </div>
   `).join('');
 
-  document.getElementById('rx-lista-wrap').style.display = '';
+  document.getElementById('rx-lista-wrap').style.display = 'block';
 }
 
 // ── SELECIONA EMPRESA ─────────────────────────────────────────────
@@ -131,7 +131,7 @@ function rxSelecionarEmpresa(idx) {
 
   // Mostra painel de confirmação
   const painel = document.getElementById('rx-confirmar');
-  painel.style.display = '';
+  painel.style.display = 'flex';
   document.getElementById('rx-confirmar-nome').textContent = rxSelecionada.escritorio;
   document.getElementById('rx-confirmar-cidade').textContent = rxSelecionada.cidade || '—';
 }
@@ -344,6 +344,7 @@ function rxNovo() {
   if (rxEmpresas.length) {
     document.querySelectorAll('.rx-empresa-card').forEach(c => c.classList.remove('sel'));
     document.getElementById('rx-confirmar').style.display = 'none';
+    document.getElementById('rx-lista-wrap').style.display = 'block';
   }
 }
 
