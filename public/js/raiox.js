@@ -1031,17 +1031,27 @@ async function rxGerarPDF() {
 
       // ── DESTAQUE (Resultado esperado, Número X) ───────────────────
       if (tipo === 'destaque') {
-        chkPg(18);
-        if (ultimoTipo !== 'vazio') py += 3;
-        doc.setFillColor(255, 248, 230);
-        doc.roundedRect(ML - 2, py - 5, TW + 4, 14, 2, 2, 'F');
-        doc.setDrawColor(...COR.laranja);
-        doc.setLineWidth(0.5);
-        doc.roundedRect(ML - 2, py - 5, TW + 4, 14, 2, 2, 'S');
+        // Calcula altura real ANTES de desenhar
         sf(doc, 'bold', 10, [180, 100, 0]);
-        const tl = doc.splitTextToSize(linha, TW - 6);
-        doc.text(tl, ML + 2, py + 2);
-        py += tl.length * 6.5 + 7;
+        const tl = doc.splitTextToSize(linha, TW - 8);
+        const lineH   = 6.5;
+        const padTop  = 5;
+        const padBot  = 6;
+        const boxH    = tl.length * lineH + padTop + padBot;
+        chkPg(boxH + 6);
+        if (ultimoTipo !== 'vazio') py += 4;
+        // Fundo e borda com altura correta
+        doc.setFillColor(255, 248, 230);
+        doc.roundedRect(ML - 2, py - padTop, TW + 4, boxH, 3, 3, 'F');
+        doc.setDrawColor(...COR.laranja);
+        doc.setLineWidth(0.6);
+        doc.roundedRect(ML - 2, py - padTop, TW + 4, boxH, 3, 3, 'S');
+        // Barra esquerda laranja
+        doc.setFillColor(...COR.laranja);
+        doc.roundedRect(ML - 2, py - padTop, 4, boxH, 2, 2, 'F');
+        // Texto
+        doc.text(tl, ML + 5, py + 1);
+        py += boxH + 4;
         primera = false;
         ultimoTipo = 'destaque';
         continue;
