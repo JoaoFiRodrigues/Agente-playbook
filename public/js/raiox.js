@@ -488,14 +488,24 @@ Semana 12 — Consolidação e Visão do Próximo Ciclo:
 Resultado final dos 90 dias: descreva em detalhes onde ${r[COLS.escritorio]} deve estar — faturamento esperado, produtos ativos, estrutura comercial, novos clientes, indicadores funcionando.
 
 REGRAS ABSOLUTAS:
-1. Escreva no mínimo 15 páginas A4 de conteúdo. Seja extenso, rico e detalhado.
-2. NUNCA escreva meta-instruções como "INSTRUÇÃO:", "[coloque aqui]", "Defina", "Preencha". Tudo já escrito e completo.
-3. Cite "${r[COLS.escritorio]}" pelo nome em pelo menos 3 vezes por seção.
-4. Todos os números devem ser calculados e reais — não estimativas vagas.
-5. Exemplos práticos devem ser específicos para contabilidade — não genéricos de negócios.
-6. Tom: Fernando Muterle falando diretamente com o dono do escritório. Direto, empático, sem enrolação.
-7. Formatação: use # para títulos principais, ## para subtítulos, - para bullets. Sem tabelas markdown.
-8. Cada seção deve ter no mínimo 3 parágrafos ou 6 bullets detalhados.`;
+1. Escreva no mínimo 15 páginas A4. Seja extenso, rico e detalhado em cada seção.
+2. NUNCA escreva meta-instruções como "INSTRUÇÃO:", "[coloque aqui]", "Defina", "Preencha".
+3. Cite o nome do escritório pelo menos 3 vezes por seção.
+4. Todos os números devem ser calculados — não estime vagamente.
+5. Tom: Fernando Muterle falando diretamente com o dono. Direto, empático, sem enrolação.
+
+FORMATAÇÃO OBRIGATÓRIA (siga à risca para o PDF ficar correto):
+- Títulos de seção principal: escreva em MAIÚSCULAS sem # (ex: INTRODUÇÃO, ANÁLISE DE DADOS)
+- Subtítulos: escreva em MAIÚSCULAS terminando com : (ex: RETRATO FINANCEIRO ATUAL:)
+- Fases e semanas: comece com FASE ou SEMANA em maiúsculas (ex: FASE 1, SEMANA 1)
+- Produtos: comece com PRODUTO 1 ou PRODUTO 2 em maiúsculas
+- Bullets: use - no início de cada item
+- Itens numerados: use 1. 2. 3. no início
+- Resultado esperado: comece com "Resultado esperado:" em cada semana
+- Números-chave: comece com "Número 1:", "Número 2:" etc
+- Parágrafos normais: escreva normalmente sem marcadores
+- NUNCA use ** para negrito nem # ou ##
+- Separe seções com linha em branco entre cada bloco`;
 }
 
 
@@ -879,49 +889,173 @@ async function rxGerarPDF() {
       }
     };
 
+    // ── CLASSIFICADOR DE LINHA ─────────────────────────────────────
     const tipoL = (l) => {
       const t = l.trim();
       if (!t) return 'vazio';
-      if (t.startsWith('* ')) return 'bullet';
-      if (t.toUpperCase()===t && t.length>3 && t.length<90 && !/^\d/.test(t)) return 'titulo';
+      // Título principal: ##  no início (já removido o #, vira MAIÚSCULO com —)
+      if (t.startsWith('FASE ') || t.startsWith('SEMANA ') || t.startsWith('PRODUTO ')) return 'titulo_fase';
+      if (t.match(/^\d+\./)) return 'numerado';
+      if (t.startsWith('* ') || t.startsWith('- ')) return 'bullet';
+      if (t.endsWith(':') && t.length < 60 && t === t.toUpperCase()) return 'titulo_secao';
+      if (t === t.toUpperCase() && t.length > 5 && t.length < 100 && !/^\d/.test(t) && !t.includes(',')) return 'titulo';
+      if (t.startsWith('Número ') || t.startsWith('Resultado ') || t.startsWith('Resultado esperado')) return 'destaque';
       return 'paragrafo';
     };
+
+    let ultimoTipo = '';
 
     for (const rawL of linhas) {
       const linha = rawL.trimEnd();
       const tipo  = tipoL(linha);
 
-      if (tipo==='vazio') { py+=4; continue; }
+      if (tipo === 'vazio') {
+        if (ultimoTipo === 'paragrafo') py += 4;
+        else py += 2;
+        ultimoTipo = 'vazio';
+        continue;
+      }
 
-      if (tipo==='titulo') {
+      // ── TÍTULO PRINCIPAL (seção grande) ──────────────────────────
+      if (tipo === 'titulo') {
+        chkPg(40);
+        if (!primera && ultimoTipo !== 'vazio') py += 8;
+        // Fundo roxo sólido
+        doc.setFillColor(...COR.roxo);
+        doc.roundedRect(ML - 3, py - 7, TW + 6, 16, 3, 3, 'F');
+        // Barra laranja esquerda
+        doc.setFillColor(...COR.laranja);
+        doc.roundedRect(ML - 3, py - 7, 5, 16, 2, 2, 'F');
+        sf(doc, 'bold', 12, COR.branco);
+        const tl = doc.splitTextToSize(linha, TW - 12);
+        doc.text(tl, ML + 6, py + 2);
+        py += tl.length * 7 + 10;
+        primera = false;
+        ultimoTipo = 'titulo';
+        continue;
+      }
+
+      // ── TÍTULO DE FASE (FASE 1, SEMANA 3, PRODUTO 1) ─────────────
+      if (tipo === 'titulo_fase') {
         chkPg(36);
-        if (!primera) py+=6;
+        if (ultimoTipo !== 'vazio') py += 7;
+        // Fundo roxo claro com borda laranja
         doc.setFillColor(...COR.roxoClaro);
-        doc.roundedRect(ML-3,py-7,TW+6,14,2,2,'F');
+        doc.roundedRect(ML - 3, py - 6, TW + 6, 14, 3, 3, 'F');
         doc.setFillColor(...COR.laranja);
-        doc.rect(ML-3,py-7,3.5,14,'F');
-        sf(doc,'bold',12,COR.roxo);
-        const tl=doc.splitTextToSize(linha,TW-8);
-        doc.text(tl,ML+4,py+1);
-        py+=tl.length*7+6; primera=false; continue;
+        doc.roundedRect(ML - 3, py - 6, 5, 14, 2, 2, 'F');
+        sf(doc, 'bold', 11, COR.roxo);
+        const tl = doc.splitTextToSize(linha, TW - 10);
+        doc.text(tl, ML + 6, py + 2);
+        py += tl.length * 6.5 + 8;
+        primera = false;
+        ultimoTipo = 'titulo_fase';
+        continue;
       }
 
-      if (tipo==='bullet') {
+      // ── SUBTÍTULO DE SEÇÃO (ex: "ANÁLISE FINANCEIRA:") ───────────
+      if (tipo === 'titulo_secao') {
+        chkPg(28);
+        if (ultimoTipo !== 'vazio') py += 6;
+        // Linha lateral laranja + texto roxo
+        doc.setFillColor(...COR.laranja);
+        doc.rect(ML - 3, py - 5, 3, 11, 'F');
+        doc.setFillColor(248, 244, 252);
+        doc.rect(ML, py - 5, TW, 11, 'F');
+        sf(doc, 'bold', 10, COR.roxo);
+        doc.text(linha.replace(/:$/, ''), ML + 5, py + 2);
+        py += 12;
+        primera = false;
+        ultimoTipo = 'titulo_secao';
+        continue;
+      }
+
+      // ── ITEM NUMERADO (ex: "Número 1:", "Passo 1:") ──────────────
+      if (tipo === 'numerado') {
+        chkPg(14);
+        if (ultimoTipo === 'paragrafo') py += 3;
+        const numMatch = linha.match(/^(\d+)\.\s*(.*)/);
+        const num = numMatch ? numMatch[1] : '•';
+        const txt = numMatch ? numMatch[2] : linha;
+        // Círculo numerado
+        doc.setFillColor(...COR.roxo);
+        doc.circle(ML + 3.5, py - 1.5, 3.5, 'F');
+        sf(doc, 'bold', 7.5, COR.branco);
+        doc.text(num, ML + 3.5, py - 0.5, { align: 'center' });
+        // Texto
+        sf(doc, 'normal', 10.5, COR.texto);
+        const tl = doc.splitTextToSize(txt, TW - 12);
+        doc.text(tl, ML + 10, py);
+        py += Math.max(tl.length * 6, 8) + 3;
+        primera = false;
+        ultimoTipo = 'numerado';
+        continue;
+      }
+
+      // ── BULLET ───────────────────────────────────────────────────
+      if (tipo === 'bullet') {
         chkPg(12);
-        const txt=linha.replace(/^\*\s*/,'');
-        const tl=doc.splitTextToSize(txt,TW-9);
+        const txt = linha.replace(/^[\*\-]\s*/, '');
+        // Detecta se tem "Chave: valor" para destacar a chave
+        const colonIdx = txt.indexOf(': ');
+        const tl = doc.splitTextToSize(txt, TW - 10);
+        // Bolinha laranja
         doc.setFillColor(...COR.laranja);
-        doc.circle(ML+2.5,py-1.8,1.8,'F');
-        sf(doc,'normal',11,COR.texto);
-        doc.text(tl,ML+8,py);
-        py+=tl.length*6.5+2.5; primera=false; continue;
+        doc.circle(ML + 2.5, py - 1.5, 1.8, 'F');
+        if (colonIdx > 0 && colonIdx < 35) {
+          // Chave em negrito + valor normal
+          const chave = txt.substring(0, colonIdx);
+          const valor = txt.substring(colonIdx + 2);
+          sf(doc, 'bold', 10.5, COR.roxo);
+          const chaveW = doc.getTextWidth(chave + ': ');
+          doc.text(chave + ':', ML + 7, py);
+          sf(doc, 'normal', 10.5, COR.texto);
+          const valorLines = doc.splitTextToSize(valor, TW - 10 - chaveW);
+          doc.text(valorLines[0], ML + 7 + chaveW, py);
+          if (valorLines.length > 1) {
+            valorLines.slice(1).forEach((vl, vi) => {
+              py += 6;
+              doc.text(vl, ML + 10, py);
+            });
+          }
+        } else {
+          sf(doc, 'normal', 10.5, COR.texto);
+          doc.text(tl, ML + 7, py);
+          py += (tl.length - 1) * 6;
+        }
+        py += 7;
+        primera = false;
+        ultimoTipo = 'bullet';
+        continue;
       }
 
+      // ── DESTAQUE (Resultado esperado, Número X) ───────────────────
+      if (tipo === 'destaque') {
+        chkPg(18);
+        if (ultimoTipo !== 'vazio') py += 3;
+        doc.setFillColor(255, 248, 230);
+        doc.roundedRect(ML - 2, py - 5, TW + 4, 14, 2, 2, 'F');
+        doc.setDrawColor(...COR.laranja);
+        doc.setLineWidth(0.5);
+        doc.roundedRect(ML - 2, py - 5, TW + 4, 14, 2, 2, 'S');
+        sf(doc, 'bold', 10, [180, 100, 0]);
+        const tl = doc.splitTextToSize(linha, TW - 6);
+        doc.text(tl, ML + 2, py + 2);
+        py += tl.length * 6.5 + 7;
+        primera = false;
+        ultimoTipo = 'destaque';
+        continue;
+      }
+
+      // ── PARÁGRAFO ─────────────────────────────────────────────────
       chkPg(14);
-      sf(doc,'normal',11,COR.texto);
-      const tl=doc.splitTextToSize(linha,TW);
-      doc.text(tl,ML,py);
-      py+=tl.length*6.5+1.5; primera=false;
+      sf(doc, 'normal', 10.5, COR.texto);
+      doc.setLineHeightFactor(1.5);
+      const tl = doc.splitTextToSize(linha, TW);
+      doc.text(tl, ML, py);
+      py += tl.length * 6.8 + 2;
+      primera = false;
+      ultimoTipo = 'paragrafo';
     }
 
     // ── CONTRA-CAPA ───────────────────────────────────────────────
