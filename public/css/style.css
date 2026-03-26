@@ -111,7 +111,7 @@ body {
 
 /* ── VIEW ────────────────────────────────────────── */
 .view { display: none; }
-.view.active { display: block; }
+.view.active { display: block; max-width: 960px; margin: 0 auto; padding: 1.5rem 1rem 3rem;}
 
 /* ── STEP ────────────────────────────────────────── */
 .step { display: none; }
