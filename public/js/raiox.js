@@ -984,25 +984,27 @@ async function rxGerarPDF() {
 
       // ── DESTAQUE (Resultado esperado, Número X) ───────────────────
       if (tipo === 'destaque') {
-        // Calcula altura real ANTES de desenhar
+        // 1. Calcula fonte e quebra de texto ANTES de qualquer desenho
         sf(doc, 'bold', 10, [180, 100, 0]);
-        const tl = doc.splitTextToSize(linha, TW - 8);
+        const tl      = doc.splitTextToSize(linha, TW - 8);
         const lineH   = 6.5;
         const padTop  = 5;
         const padBot  = 6;
         const boxH    = tl.length * lineH + padTop + padBot;
-        chkPg(boxH + 6);
+        // 2. Verifica se cabe — se não, muda de página PRIMEIRO
+        chkPg(boxH + 10);
+        // 3. Só depois do chkPg aplica o espaço entre elementos
         if (ultimoTipo !== 'vazio') py += 4;
-        // Fundo e borda com altura correta
+        // 4. Agora desenha — py já está na posição correta da página atual
         doc.setFillColor(255, 248, 230);
         doc.roundedRect(ML - 2, py - padTop, TW + 4, boxH, 3, 3, 'F');
         doc.setDrawColor(...COR.laranja);
         doc.setLineWidth(0.6);
         doc.roundedRect(ML - 2, py - padTop, TW + 4, boxH, 3, 3, 'S');
-        // Barra esquerda laranja
         doc.setFillColor(...COR.laranja);
         doc.roundedRect(ML - 2, py - padTop, 4, boxH, 2, 2, 'F');
-        // Texto
+        // 5. Texto alinhado ao topo do padding
+        sf(doc, 'bold', 10, [180, 100, 0]);
         doc.text(tl, ML + 5, py + 1);
         py += boxH + 4;
         primera = false;
