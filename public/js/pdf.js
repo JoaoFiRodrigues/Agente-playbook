@@ -142,14 +142,6 @@ async function desenharPaginaOferta(doc, W, H, ML, MR, TW) {
     const qrSize = 52;
     const qrX = W / 2 - qrSize / 2;
     const qrY = 44;
-    // Borda branca ao redor do QR
-    doc.setFillColor(255, 255, 255);
-    doc.roundedRect(qrX - 3, qrY - 3, qrSize + 6, qrSize + 6, 3, 3, 'F');
-    doc.setDrawColor(...COR.roxo);
-    doc.setLineWidth(1);
-    doc.roundedRect(qrX - 3, qrY - 3, qrSize + 6, qrSize + 6, 3, 3, 'S');
-    doc.addImage(qrBase64, 'PNG', qrX, qrY, qrSize, qrSize);
-    var qrBottom = qrY + qrSize + 8;
   } else {
     // Fallback: desenha quadrado simulando QR com texto do link
     const qrX = W/2 - 28, qrY = 44, qrSize = 56;
