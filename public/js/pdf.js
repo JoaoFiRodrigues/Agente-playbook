@@ -12,6 +12,7 @@ const COR = {
   texto:     [ 30,  30,  30],
   roxoClaro: [237, 220, 245],
   roxoMedio: [120,  40, 160],
+  // Cores da Jornada
   topoRoxo:   [102,  16, 129],
   premPlus:   [ 76,  29, 149],
   prem:       [ 37,  99, 235],
@@ -55,7 +56,7 @@ function tipoLinha(linha) {
   const l = linha.trim();
   if (!l) return 'vazio';
   if (l.startsWith('* ')) return 'bullet';
-  if (l.toUpperCase() === l && l.length > 3 && l.length < 120 && !/^\d/.test(l)) return 'titulo';
+  if (l.toUpperCase() === l && l.length > 3 && l.length < 90 && !/^\d/.test(l)) return 'titulo';
   return 'paragrafo';
 }
 
@@ -84,6 +85,8 @@ async function gerarQRBase64(url) {
   return new Promise((resolve, reject) => {
     try {
       const canvas = document.createElement('canvas');
+      // QRious é carregado via script tag no HTML
+      // Fallback: gera QR via API pública
       if (typeof QRious !== 'undefined') {
         const qr = new QRious({
           element: canvas,
@@ -97,6 +100,7 @@ async function gerarQRBase64(url) {
         });
         resolve(canvas.toDataURL('image/png'));
       } else {
+        // Fallback: usa QR via Google Charts API como imagem
         resolve(null);
       }
     } catch(e) {
@@ -111,9 +115,11 @@ async function desenharPaginaOferta(doc, W, H, ML, MR, TW) {
 
   doc.addPage();
 
+  // Fundo branco
   doc.setFillColor(255, 255, 255);
   doc.rect(0, 0, W, H, 'F');
 
+  // Header roxo
   doc.setFillColor(...COR.roxo);
   doc.rect(0, 0, W, 18, 'F');
   doc.setFillColor(...COR.laranja);
@@ -122,26 +128,30 @@ async function desenharPaginaOferta(doc, W, H, ML, MR, TW) {
   doc.text('OFERTA ESPECIAL CARDSINOVA', ML, 12);
 
   // ── SEÇÃO QR CODE ─────────────────────────────────────────────
+  // Badge 30 dias grátis
   doc.setFillColor(...COR.laranja);
   doc.roundedRect(ML, 24, TW, 14, 4, 4, 'F');
   setFont(doc, 'bold', 14, COR.branco);
   doc.text('30 DIAS GRATIS - PLATAFORMA DE ASSINATURA DIGITAL', W/2, 33, { align: 'center' });
 
+  // Tenta gerar QR com QRious
   const qrBase64 = await gerarQRBase64(WA_URL);
 
   if (qrBase64) {
+    // QR gerado com sucesso — insere como imagem
     const qrSize = 52;
     const qrX = W / 2 - qrSize / 2;
     const qrY = 44;
-    
+    // Borda branca ao redor do QR
     doc.setFillColor(255, 255, 255);
-    doc.roundedRect(qrX, qrY, qrSize, qrSize, 3, 3, 'F');
+    doc.roundedRect(qrX - 3, qrY - 3, qrSize + 6, qrSize + 6, 3, 3, 'F');
     doc.setDrawColor(...COR.roxo);
     doc.setLineWidth(1);
-    doc.roundedRect(qrX, qrY, qrSize, qrSize, 3, 3, 'S');
+    doc.roundedRect(qrX - 3, qrY - 3, qrSize + 6, qrSize + 6, 3, 3, 'S');
     doc.addImage(qrBase64, 'PNG', qrX, qrY, qrSize, qrSize);
     var qrBottom = qrY + qrSize + 8;
   } else {
+    // Fallback: desenha quadrado simulando QR com texto do link
     const qrX = W/2 - 28, qrY = 44, qrSize = 56;
     doc.setFillColor(248, 244, 252);
     doc.roundedRect(qrX - 2, qrY - 2, qrSize + 4, qrSize + 4, 3, 3, 'F');
@@ -149,17 +159,20 @@ async function desenharPaginaOferta(doc, W, H, ML, MR, TW) {
     doc.setLineWidth(1);
     doc.roundedRect(qrX - 2, qrY - 2, qrSize + 4, qrSize + 4, 3, 3, 'S');
 
+    // Padrão visual de QR (simulado com retângulos)
     doc.setFillColor(...COR.roxo);
-    [[0,0],[0,1],[1,0],[1,1]].forEach(([dx,dy]) => {
+    // Cantos do QR
+    [[0,0],[0,1],[1,0],[1,1]].forEach(([dx,dy]) => { // top-left
       doc.rect(qrX+2+dx*5, qrY+2+dy*5, 4, 4, 'F');
     });
-    doc.rect(qrX+2, qrY+2, 18, 18, 'S');
-    doc.rect(qrX+qrSize-20, qrY+2, 18, 18, 'S');
-    doc.rect(qrX+2, qrY+qrSize-20, 18, 18, 'S');
+    doc.rect(qrX+2, qrY+2, 18, 18, 'S'); // borda top-left
+    doc.rect(qrX+qrSize-20, qrY+2, 18, 18, 'S'); // borda top-right
+    doc.rect(qrX+2, qrY+qrSize-20, 18, 18, 'S'); // borda bottom-left
     [[0,0],[0,1],[1,0],[1,1]].forEach(([dx,dy]) => {
       doc.rect(qrX+qrSize-18+dx*5, qrY+2+dy*5, 4, 4, 'F');
       doc.rect(qrX+2+dx*5, qrY+qrSize-18+dy*5, 4, 4, 'F');
     });
+    // Módulos centrais (padrão)
     for(let r=0;r<4;r++) for(let c=0;c<4;c++) {
       if((r+c)%2===0) doc.rect(qrX+20+c*4, qrY+20+r*4, 3, 3, 'F');
     }
@@ -168,12 +181,14 @@ async function desenharPaginaOferta(doc, W, H, ML, MR, TW) {
     var qrBottom = qrY + qrSize + 10;
   }
 
+  // Instrução abaixo do QR
   setFont(doc, 'normal', 9, [90, 90, 90]);
   doc.text('Aponte a camera do celular para o QR Code e fale com nossa equipe', W/2, qrBottom + 2, { align: 'center' });
 
   // ── JORNADA DO CLIENTE ─────────────────────────────────────────
   const jornadaY = qrBottom + 18;
 
+  // Título da seção
   doc.setFillColor(...COR.roxo);
   doc.rect(ML, jornadaY, TW, 12, 'F');
   setFont(doc, 'bold', 11, COR.branco);
@@ -194,9 +209,11 @@ async function desenharPaginaOferta(doc, W, H, ML, MR, TW) {
   const rowH = 13;
 
   jornada.forEach((item, idx) => {
+    // Fundo colorido
     doc.setFillColor(...item.cor);
     doc.rect(ML, jy, TW, rowH, 'F');
 
+    // Badge nível (esquerda)
     doc.setFillColor(0, 0, 0, 0.15);
     setFont(doc, 'bold', 7, [255,255,255,0.9]);
     doc.setTextColor(255, 255, 255);
@@ -204,6 +221,7 @@ async function desenharPaginaOferta(doc, W, H, ML, MR, TW) {
     doc.setFont('helvetica', 'bold');
     doc.text(item.icone, ML + 3, jy + 8.5);
 
+    // Linha vertical separadora
     doc.setDrawColor(255, 255, 255);
     doc.setLineWidth(0.3);
     doc.setOpacity && doc.setOpacity(0.4);
@@ -211,11 +229,13 @@ async function desenharPaginaOferta(doc, W, H, ML, MR, TW) {
     doc.line(sepX, jy + 1, sepX, jy + rowH - 1);
     doc.setOpacity && doc.setOpacity(1);
 
+    // Nome do produto
     doc.setFontSize(9);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(255, 255, 255);
     doc.text(item.nome, ML + 31, jy + 5.5);
 
+    // Descrição
     doc.setFontSize(8);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(255, 255, 255);
@@ -226,142 +246,9 @@ async function desenharPaginaOferta(doc, W, H, ML, MR, TW) {
     jy += rowH;
   });
 
+  // Rodapé da página
   setFont(doc, 'normal', 8, [150, 150, 150]);
   doc.text('CardSinova  |  Transformar e Potencializar Contabilidades', W/2, H - 8, { align: 'center' });
-}
-
-// ── RENDERIZAR CONTEÚDO EM CARDS ESTRUTURADOS ──────────────────────
-function renderizarConteudoEmCards(doc, textoLimpo, W, H, ML, MR, TW, pageNum) {
-  const linhas = textoLimpo.split('\n');
-  
-  const corFundo = [245, 238, 250];
-  const corBarra = [241, 152, 0];
-  const corTitulo = [102, 16, 129];
-  const corSubtitulo = [90, 90, 90];
-  const corTexto = [30, 30, 30];
-  const corDivisor = [200, 150, 220];
-  
-  const paddingCard = 5;
-  const larguraBarra = 4;
-  const margemCard = 10;
-  const MT = 28;
-  const MB = 22;
-  const alturaHeader = 13;
-  
-  let py = MT;
-  let pageNum_local = pageNum;
-  
-  const desenharHeader = () => {
-    doc.setFillColor(...[102, 16, 129]);
-    doc.rect(0, 0, W, alturaHeader, 'F');
-    doc.setFillColor(...[241, 152, 0]);
-    doc.rect(0, 0, 6, alturaHeader, 'F');
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(7.5);
-    doc.setTextColor(255, 255, 255);
-    doc.text('Playbook Estrategico', ML, 9);
-    doc.text(String(pageNum_local), W - MR, 9, { align: 'right' });
-    pageNum_local++;
-    py = MT;
-  };
-  
-  const desenharCard = (titulo, conteudo) => {
-    const alturaTitulo = 10;
-    
-    if (py + alturaTitulo + 30 > H - MB) {
-      doc.addPage();
-      doc.setFillColor(255, 255, 255);
-      doc.rect(0, 0, W, H, 'F');
-      desenharHeader();
-    }
-    
-    doc.setFillColor(...corFundo);
-    doc.roundedRect(ML, py, TW, 5, 2, 2, 'F');
-    
-    doc.setFillColor(...corBarra);
-    doc.rect(ML, py, larguraBarra, 5, 'F');
-    
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(...corTitulo);
-    const tituloLines = doc.splitTextToSize(titulo, TW - larguraBarra - paddingCard * 2);
-    doc.text(tituloLines[0], ML + larguraBarra + paddingCard, py + 3.5);
-    
-    py += 8;
-    
-    const linhasConteudo = [];
-    conteudo.forEach(linha => {
-      if (linha.trim().startsWith('* ')) {
-        const txt = linha.trim().substring(2);
-        const quebradas = doc.splitTextToSize(txt, TW - larguraBarra - paddingCard * 2 - 8);
-        quebradas.forEach(q => linhasConteudo.push({ tipo: 'bullet', texto: q }));
-      } else if (linha.trim()) {
-        const quebradas = doc.splitTextToSize(linha.trim(), TW - larguraBarra - paddingCard * 2);
-        quebradas.forEach(q => linhasConteudo.push({ tipo: 'paragrafo', texto: q }));
-      }
-    });
-    
-    doc.setFontSize(10);
-    doc.setTextColor(...corTexto);
-    
-    linhasConteudo.forEach((item, idx) => {
-      if (py + 6 > H - MB) {
-        doc.addPage();
-        doc.setFillColor(255, 255, 255);
-        doc.rect(0, 0, W, H, 'F');
-        desenharHeader();
-      }
-      
-      if (item.tipo === 'bullet') {
-        doc.setFillColor(...corBarra);
-        doc.circle(ML + larguraBarra + paddingCard + 2, py + 1.5, 1.2, 'F');
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(10);
-        doc.setTextColor(...corTexto);
-        doc.text(item.texto, ML + larguraBarra + paddingCard + 6, py + 2);
-      } else {
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(10);
-        doc.setTextColor(...corTexto);
-        doc.text(item.texto, ML + larguraBarra + paddingCard, py + 2);
-      }
-      
-      py += 5.5;
-    });
-    
-    py += 3;
-    doc.setDrawColor(...corDivisor);
-    doc.setLineWidth(0.5);
-    doc.line(ML + larguraBarra + paddingCard, py, W - MR - paddingCard, py);
-    
-    py += margemCard;
-  };
-  
-  let tituloAtual = '';
-  let conteudoAtual = [];
-  
-  for (const rawL of linhas) {
-    const linha = rawL.trimEnd();
-    const tipo = tipoLinha(linha);
-    
-    if (tipo === 'vazio') continue;
-    
-    if (tipo === 'titulo') {
-      if (tituloAtual && conteudoAtual.length > 0) {
-        desenharCard(tituloAtual, conteudoAtual);
-      }
-      tituloAtual = linha;
-      conteudoAtual = [];
-    } else {
-      conteudoAtual.push(linha);
-    }
-  }
-  
-  if (tituloAtual && conteudoAtual.length > 0) {
-    desenharCard(tituloAtual, conteudoAtual);
-  }
-  
-  return pageNum_local;
 }
 
 // ── GERAR PDF PRINCIPAL ───────────────────────────────────────────
@@ -495,18 +382,85 @@ async function gerarPDF() {
     });
 
     // ══════════════════════════════════════════════
-    // PÁGINAS DE CONTEÚDO — EM CARDS VISUAIS
+    // PÁGINAS DE CONTEÚDO
     // ══════════════════════════════════════════════
-    await prog(50, 'Formatando conteudo em cards...', 400);
+    await prog(50, 'Formatando conteudo...', 400);
 
     const textoLimpo = limparTexto(lastGeneratedContent);
+    const linhas     = textoLimpo.split('\n');
 
     doc.addPage();
     doc.setFillColor(255, 255, 255);
     doc.rect(0, 0, W, H, 'F');
 
-    let pageNum = 4;
-    pageNum = renderizarConteudoEmCards(doc, textoLimpo, W, H, ML, MR, TW, pageNum);
+    let py = MT, pageNum = 4, primeiraLinha = true;
+
+    const addHeader = () => {
+      doc.setFillColor(...COR.roxo);
+      doc.rect(0, 0, W, 13, 'F');
+      doc.setFillColor(...COR.laranja);
+      doc.rect(0, 0, 6, 13, 'F');
+      setFont(doc, 'normal', 7.5, COR.branco);
+      const sn = lastDados.escritorio.length > 48
+        ? lastDados.escritorio.slice(0, 45) + '...' : lastDados.escritorio;
+      doc.text(sn + '  |  Playbook Estrategico', ML, 9);
+      doc.text(String(pageNum), W - MR, 9, { align: 'right' });
+      pageNum++;
+      py = MT;
+      primeiraLinha = true;
+    };
+    addHeader();
+
+    const checkPg = (esp) => {
+      if (py > H - MB - (esp || 22)) {
+        doc.addPage();
+        doc.setFillColor(255, 255, 255);
+        doc.rect(0, 0, W, H, 'F');
+        addHeader();
+      }
+    };
+
+    for (const rawL of linhas) {
+      const linha = rawL.trimEnd();
+      const tipo  = tipoLinha(linha);
+
+      if (tipo === 'vazio') { py += 4; continue; }
+
+      if (tipo === 'titulo') {
+        checkPg(36);
+        if (!primeiraLinha) py += 6;
+        doc.setFillColor(...COR.roxoClaro);
+        doc.roundedRect(ML - 3, py - 7, TW + 6, 14, 2, 2, 'F');
+        doc.setFillColor(...COR.laranja);
+        doc.rect(ML - 3, py - 7, 3.5, 14, 'F');
+        setFont(doc, 'bold', 12, COR.roxo);
+        const tl = doc.splitTextToSize(linha, TW - 8);
+        doc.text(tl, ML + 4, py + 1);
+        py += tl.length * 7 + 6;
+        primeiraLinha = false;
+        continue;
+      }
+
+      if (tipo === 'bullet') {
+        checkPg(12);
+        const txt = linha.replace(/^\*\s*/, '');
+        const tl  = doc.splitTextToSize(txt, TW - 9);
+        doc.setFillColor(...COR.laranja);
+        doc.circle(ML + 2.5, py - 1.8, 1.8, 'F');
+        setFont(doc, 'normal', 11, COR.texto);
+        doc.text(tl, ML + 8, py);
+        py += tl.length * 6.5 + 2.5;
+        primeiraLinha = false;
+        continue;
+      }
+
+      checkPg(14);
+      setFont(doc, 'normal', 11, COR.texto);
+      const tl = doc.splitTextToSize(linha, TW);
+      doc.text(tl, ML, py);
+      py += tl.length * 6.5 + 1.5;
+      primeiraLinha = false;
+    }
 
     // ══════════════════════════════════════════════
     // CONTRA-CAPA
