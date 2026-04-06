@@ -172,7 +172,7 @@ async function desenharPaginaOferta(doc, W, H, ML, MR, TW, COR) {
   doc.setFillColor(...COR.laranja);
   doc.roundedRect(ML, 18, TW, 14, 4, 4, 'F');
   sf(doc, 'bold', 13, COR.branco);
-  doc.text('30 DIAS GRÁTIS — ESCANEIE E COMECE AGORA', W/2, 27, { align: 'center' });
+  doc.text('5 ASSINATURAS GRÁTIS — ESCANEIE E COMECE AGORA', W/2, 27, { align: 'center' });
 
   // QR Code
   let qrBase64 = null;
