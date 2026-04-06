@@ -152,7 +152,15 @@ REGRAS CRÍTICAS:
 6. Diagnóstico específico para as dores: ${d.dores}.
 7. Agenda: 3-4 ações concretas por semana, específicas e aplicáveis.
 8. Tom: profissional, empático, motivador. O parceiro deve sentir exclusividade.
-9. Formatação: use apenas # para títulos e - para bullets. Sem tabelas markdown.`;
+9. Formatação obrigatória para o PDF ficar premium:
+Títulos de seção: MAIÚSCULAS sem # (ex: DIAGNÓSTICO, PLANO DE AÇÃO)
+Subtítulos: frase normal terminando com : (ex: Situação atual do escritório:)
+Bullets: use - no início
+Frases de impacto curtas (máx 80 chars, toda maiúscula, entre aspas): "NÃO VENDEMOS PRODUTO. VENDEMOS DIREÇÃO."
+Blocos editoriais: comece com NA PRÁTICA:, ERRO COMUM:, PONTO DE ATENÇÃO:, EXEMPLO REAL:, PLANO DE AÇÃO:, COMO APLICAR:
+Use blocos editoriais pelo menos 3 vezes por playbook para dar ritmo
+Use frases de impacto pelo menos 2 vezes por playbook
+Sem **, sem #, sem tabelas markdown`;
 }
 
 // ── LOADING MESSAGES ──────────────────────────────────────────────
