@@ -160,7 +160,7 @@ function desenharImpacto(doc, ML, py, TW, W, linha, COR) {
 
 // ── PÁGINA DE OFERTA QR + JORNADA ────────────────────────────────
 async function desenharPaginaOferta(doc, W, H, ML, MR, TW, COR) {
-  const WA_URL = 'https://api.whatsapp.com/send?phone=551936018499';
+  const WA_URL = 'https://api.whatsapp.com/send?phone=5519987820357';
   doc.addPage();
   doc.setFillColor(255, 255, 255); doc.rect(0, 0, W, H, 'F');
   doc.setFillColor(...COR.roxo); doc.rect(0, 0, W, 13, 'F');
